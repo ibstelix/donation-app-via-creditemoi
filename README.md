@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Flutter Charity Donation App Concept
 
 Made by Maadhav Sharma
@@ -22,3 +23,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# jefjel-app
+>>>>>>> 76f704d3cb139b3e36ed681726e8a967893c3115
