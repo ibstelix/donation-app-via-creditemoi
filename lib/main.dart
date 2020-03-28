@@ -1,14 +1,30 @@
+import 'package:alice/alice.dart';
+import 'package:codedecoders/scope/main_model.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'login.dart';
 
 void main() => runApp(MyApp());
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+Alice alice = Alice(showNotification: true, navigatorKey: navigatorKey);
+
 class MyApp extends StatelessWidget {
+  final MainModel _model = MainModel();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Login(),
+    return ScopedModel(
+      model: _model,
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        routes: {
+          '/': (BuildContext context) => Login(
+                model: _model,
+              ),
+        },
+      ),
     );
   }
 }
