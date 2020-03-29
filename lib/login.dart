@@ -23,7 +23,24 @@ class _LoginState extends State<Login> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Text("hello"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    LineAwesomeIcons.facebook_f,
+                    color: Color(0xff3cabff),
+                    size: 30,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Icon(
+                    LineAwesomeIcons.twitter,
+                    color: Color(0xff3cabff),
+                    size: 30,
+                  )
+                ],
+              ),
             ),
           ),
         ],
