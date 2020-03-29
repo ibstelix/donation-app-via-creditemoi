@@ -66,7 +66,7 @@ class SendReceiveSwitch extends StatelessWidget {
               padding: EdgeInsets.all(15.0),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.white54, DEFAULT_COLOR],
+                    colors: [DEFAULT_COLOR, DEFAULT_COLOR],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     stops: [0.3, 1]),
@@ -74,7 +74,7 @@ class SendReceiveSwitch extends StatelessWidget {
               ),
               child: Icon(
                 _switch_icon,
-                color: DEFAULT_COLOR,
+                color: Colors.white,
               ),
             ),
             feedback: Container(
@@ -83,7 +83,7 @@ class SendReceiveSwitch extends StatelessWidget {
               padding: EdgeInsets.all(15.0),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.white54, DEFAULT_COLOR],
+                    colors: [DEFAULT_COLOR, DEFAULT_COLOR],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     stops: [0.3, 1]),
@@ -91,7 +91,7 @@ class SendReceiveSwitch extends StatelessWidget {
               ),
               child: Icon(
                 _switch_icon,
-                color: DEFAULT_COLOR,
+                color: Colors.white,
               ),
             ),
             axis: Axis.horizontal,

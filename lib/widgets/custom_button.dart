@@ -48,18 +48,19 @@ class CustomButton extends StatelessWidget {
                 padding: EdgeInsets.all(17),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(7.0),
-                  gradient: LinearGradient(
+                  color: Colors.transparent,
+                  /* gradient: LinearGradient(
                     colors: [Colors.white10, Colors.black12],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                  ),
-                  boxShadow: [
+                  ),*/
+                  /* boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 5.0,
                       offset: Offset(0, 3),
                     ),
-                  ],
+                  ],*/
                 ),
                 child: Image.asset(
                   buttonImage,

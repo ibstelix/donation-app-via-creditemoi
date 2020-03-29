@@ -68,8 +68,8 @@ class _DashboardState extends State<Dashboard> {
                                 color: Colors.transparent,
                               ),
                               child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  "https://cdn.pixabay.com/photo/2017/11/02/14/26/model-2911329_960_720.jpg",
+                                backgroundImage: AssetImage(
+                                  "assets/user_profile.jpg",
                                 ),
                               ),
                             )
