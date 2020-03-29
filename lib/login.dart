@@ -1,5 +1,6 @@
 import 'package:codedecoders/homePage.dart';
 import 'package:codedecoders/scope/main_model.dart';
+import 'package:codedecoders/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
@@ -88,8 +89,8 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: Color(0xff501396), width: 1)),
       onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+        /* Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));*/
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,10 +120,10 @@ class _LoginState extends State<Login> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0xff471a91),
+            DEFAULT_COLOR1,
             Color(0xff3cabff),
-            Color(0xff3cabff),
-            Color(0xff471a91)
+            DEFAULT_COLOR1,
+            DEFAULT_COLOR1
           ],
         ),
       ),
@@ -154,36 +155,41 @@ class _LoginState extends State<Login> {
   }
 
   Widget _paticipateBtn() {
-    return Container(
-      width: 330,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xff471a91), Color(0xff3cabff)],
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, "/home");
+      },
+      child: Container(
+        width: 330,
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [DEFAULT_COLOR1, Color(0xff3cabff)],
+          ),
         ),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              LineAwesomeIcons.money,
-              color: Colors.white,
-              size: 35,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              "Participer",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "CentraleSansRegular",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                LineAwesomeIcons.money,
+                color: Colors.white,
+                size: 35,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                "Participer",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "CentraleSansRegular",
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );

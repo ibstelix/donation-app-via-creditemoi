@@ -1,9 +1,14 @@
+import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/screens/explore.dart';
 import 'package:codedecoders/screens/heart.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 class HomePage extends StatefulWidget {
+  final MainModel model;
+
+  HomePage({Key key, this.model}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -18,11 +23,12 @@ class _HomePageState extends State<HomePage> {
     Container(),
   ];
 
-  void onTabTapped(int index){
+  void onTabTapped(int index) {
     setState(() {
-     _currentIndex = index; 
+      _currentIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +41,6 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.purple,
         elevation: 0,
         iconSize: 32,
-
         items: [
           BottomNavigationBarItem(
             icon: Icon(LineAwesomeIcons.heart_o),
