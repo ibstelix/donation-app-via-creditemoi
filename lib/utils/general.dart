@@ -1,4 +1,37 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+void showFormValidationToast(
+    [content = 'Certains champs ne sont pas valides',
+    color = Colors.blueGrey]) {
+  Fluttertoast.showToast(
+      msg: content,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIos: 2,
+      backgroundColor: color,
+      textColor: Colors.white,
+      fontSize: 16.0);
+}
+
+Future showSnackBar(BuildContext context, String text,
+    {bool status: false, int duration: 3}) async {
+  Color color = Colors.red;
+  if (status) {
+    color = Colors.blue[300];
+  }
+  return Flushbar(
+    message: text,
+    icon: Icon(
+      Icons.info_outline,
+      size: 28.0,
+      color: color,
+    ),
+    duration: Duration(seconds: duration),
+    leftBarIndicatorColor: color,
+  )..show(context);
+}
 
 extension HexColor on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".

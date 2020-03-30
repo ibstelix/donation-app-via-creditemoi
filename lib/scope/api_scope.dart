@@ -5,6 +5,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 class ApiScope extends Model {
   //**************************************
   Future<Map> post_noToken(Map data, String url) async {
@@ -15,14 +17,10 @@ class ApiScope extends Model {
       final Map<String, dynamic> res = json.decode(response.body);
 //      print("resultat map is $res");
 
-      if (res.containsKey('msg')) {
-        if (response.statusCode != 200) {
-          return raisedException(res['msg'], url);
-        }
-        return {"status": true, "msg": res['msg'], "data": res};
-      } else {
-        return raisedException("Erreurr Inattendue", url);
+      if (response.statusCode != 200) {
+        return raisedException(res['msg'], url);
       }
+      return {"status": true, "msg": res};
     } catch (err) {
       return errorException(err);
     }
@@ -43,41 +41,49 @@ class ApiScope extends Model {
       final Map<String, dynamic> res = json.decode(response.body);
 //      print("resultat map is $res");
 
-      if (res.containsKey('msg')) {
-        if (response.statusCode != 200) {
-          return raisedException(res['msg'], url);
-        }
-        return {"status": true, "msg": res['msg'], "data": res};
-      } else {
-        return raisedException("Erreurr Inattendue", url);
+      if (response.statusCode != 200) {
+        return raisedException(res['msg'], url);
       }
+      return {"status": true, "msg": res};
     } catch (err) {
       return errorException(err);
     }
   }
 
-  Future<Map> get_token(String url) async {
+  Future<Map> get_api(String url, [has_token = false]) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = prefs.getString(TOKEN);
-      if (token == null) {
+      if (has_token && token == null) {
         return raisedException("Erreur de Token", url);
       }
 
-      http.Response response = await http.get(url, headers: getHeaders(token));
-      //alice.onHttpResponse(response);
+      http.Response response =
+          await http.get(url, headers: has_token ? getHeaders(token) : {});
+      alice.onHttpResponse(response);
 
       final Map<String, dynamic> res = json.decode(response.body);
 //      print("resultat map is $res");
 
-      if (res.containsKey('msg')) {
-        if (response.statusCode != 200) {
-          return raisedException(res['msg'], url);
-        }
-        return {"status": true, "msg": res['msg'], "data": res};
-      } else {
-        return raisedException("Erreurr Inattendue", url);
+      if (response.statusCode != 200) {
+        return raisedException(res['msg'], url);
       }
+      return {"status": true, "msg": res};
+    } catch (err) {
+      return errorException(err);
+    }
+  }
+
+  Future<dynamic> getMyExtIpInfo() async {
+    var url = 'https://api.myip.com';
+    try {
+      http.Response response = await http.get(url);
+      final Map<String, dynamic> res = json.decode(response.body);
+
+      if (response.statusCode != 200) {
+        return raisedException(res['msg'], url);
+      }
+      return {"status": true, "msg": res};
     } catch (err) {
       return errorException(err);
     }

@@ -33,6 +33,9 @@ dependencies:
   alice: ^0.0.18
   device_info: ^0.4.1+4
   uuid: ^2.0.4
+  flushbar: ^1.9.1
+  fluttertoast: ^3.1.0
+
 
 dev_dependencies:
   flutter_test:

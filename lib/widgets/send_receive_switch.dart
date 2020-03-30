@@ -102,25 +102,30 @@ class SendReceiveSwitch extends StatelessWidget {
           ),
           DragTarget(
             builder: (context, List<int> candidateData, rejectedData) {
-              return Container(
-                padding: EdgeInsets.all(15.0),
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.call_made,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "Donation",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
-                    ),
-                  ],
+              return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, "/country");
+                },
+                child: Container(
+                  padding: EdgeInsets.all(15.0),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.call_made,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Donation",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -128,14 +133,7 @@ class SendReceiveSwitch extends StatelessWidget {
               return true;
             },
             onAccept: (data) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SendScreen();
-                  },
-                ),
-              );
+              Navigator.pushNamed(context, "/country");
             },
           ),
         ],
