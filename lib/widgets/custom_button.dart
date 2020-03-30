@@ -19,6 +19,10 @@ class CustomButton extends StatelessWidget {
         buttonText = "Banques";
         buttonImage = "assets/bank.png";
         break;
+      case ButtonType.banks:
+        buttonText = "Banques";
+        buttonImage = "assets/banks_mean.png";
+        break;
       case ButtonType.receiptients:
         buttonText = "Beneficiaires";
         buttonImage = "assets/multi_users.png";
@@ -34,6 +38,10 @@ class CustomButton extends StatelessWidget {
       case ButtonType.history:
         buttonText = "Historique";
         buttonImage = "assets/history.png";
+        break;
+      case ButtonType.mobile:
+        buttonText = "Mobile";
+        buttonImage = "assets/mobile_mean.png";
         break;
     }
     return Material(

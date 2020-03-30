@@ -12,7 +12,16 @@ void main() => runApp(MyApp());
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Alice alice = Alice(showNotification: true, navigatorKey: navigatorKey);
 
-enum ButtonType { payBills, donate, receiptients, offers, help, history }
+enum ButtonType {
+  payBills,
+  donate,
+  banks,
+  mobile,
+  receiptients,
+  offers,
+  help,
+  history
+}
 enum TransactionType { sent, received, pending }
 
 class MyApp extends StatelessWidget {

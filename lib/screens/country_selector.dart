@@ -3,8 +3,13 @@ import 'dart:convert';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
+import 'package:codedecoders/utils/style.dart';
+import 'package:codedecoders/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../main.dart';
 
 class CountrySelector extends StatefulWidget {
   final MainModel model;
@@ -49,6 +54,7 @@ class _CountrySelectorState extends State<CountrySelector> {
             _getCountryDropDownMenuItems(countries_data);
         _currentCountry =
             _default_ip_data == null ? "" : _default_ip_data['cc'];
+        _loading = false;
       });
       return;
     }
@@ -68,10 +74,14 @@ class _CountrySelectorState extends State<CountrySelector> {
     setState(() {
       _countrydropDownMenuItems = _getCountryDropDownMenuItems(countries_data);
       _currentCountry = _default_ip_data == null ? "" : _default_ip_data['cc'];
+      _loading = false;
     });
   }
 
   Future<dynamic> _getUserIpInfo() async {
+    setState(() {
+      _loading = true;
+    });
     var res = await widget.model.getMyExtIpInfo();
     print(res);
     Map ip_data;
@@ -113,6 +123,16 @@ class _CountrySelectorState extends State<CountrySelector> {
         body: Stack(
           children: <Widget>[_bodyContent(context), _loadingSpinner()],
         ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          elevation: 2,
+          child: Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {},
+        ),
       ),
     );
   }
@@ -139,11 +159,45 @@ class _CountrySelectorState extends State<CountrySelector> {
           delegate: SliverChildListDelegate(
             [
               SizedBox(
-                height: 20,
+                height: 40,
               ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   _countryDropDown(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: Text('Payer par ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18,
+                            color: Colors.black)),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Divider(
+                    height: 2,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Flexible(
+                            child: CustomButton(buttonType: ButtonType.banks)),
+                        Flexible(
+                            child: CustomButton(buttonType: ButtonType.mobile))
+                      ],
+                    ),
+                  )
                 ],
               ),
               Container(color: Colors.grey.withOpacity(0.3)),
@@ -166,7 +220,7 @@ class _CountrySelectorState extends State<CountrySelector> {
                 color: Colors.grey.withOpacity(0.5),
                 width: 1.0,
               ),
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             child: DropdownButtonHideUnderline(
               child: SizedBox(
@@ -216,18 +270,18 @@ class _CountrySelectorState extends State<CountrySelector> {
 
     for (var val in countries) {
       var country = val;
-      print('country data :  ${val['Flag']}');
+//      print('country data :  ${val['Flag']}');
 
-      /*  var leadingIc = Image.network(
+      var leadingIc = SvgPicture.network(
         country['Flag'],
         width: 30,
-      );*/
+      );
 
       items.add(new DropdownMenuItem(
           value: country['Alpha2Code'],
           child: Row(
             children: <Widget>[
-//              leadingIc,
+              leadingIc,
               SizedBox(
                 width: 10,
               ),

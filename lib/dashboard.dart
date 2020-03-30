@@ -83,7 +83,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 55),
                     color: Color(0xfff4f5f9),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

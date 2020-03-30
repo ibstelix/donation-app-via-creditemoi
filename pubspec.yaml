@@ -35,7 +35,7 @@ dependencies:
   uuid: ^2.0.4
   flushbar: ^1.9.1
   fluttertoast: ^3.1.0
-
+  flutter_svg: ^0.17.3+1
 
 dev_dependencies:
   flutter_test:
