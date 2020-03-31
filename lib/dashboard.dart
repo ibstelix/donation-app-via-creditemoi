@@ -45,9 +45,9 @@ class _DashboardState extends State<Dashboard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  "Hey User,",
+                                  "Cher Donateur,",
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 23),
+                                      color: Colors.white, fontSize: 18),
                                 ),
                                 /*Text(
                                   "What would you do like to do today ?",
@@ -83,7 +83,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 55),
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 45),
                     color: Color(0xfff4f5f9),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

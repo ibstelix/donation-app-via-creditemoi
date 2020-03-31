@@ -24,7 +24,7 @@ class Transaction extends StatelessWidget {
       case TransactionType.sent:
         transactionName = "Sent";
         transactionIconData = Icons.arrow_upward;
-        color = Color(0xff471a91);
+        color = Colors.green;
         break;
       case TransactionType.received:
         transactionName = "Received";
@@ -84,7 +84,7 @@ class Transaction extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: 5.0),
+          SizedBox(width: 10.0),
           Flexible(
             flex: 4,
             child: Column(
@@ -102,6 +102,9 @@ class Transaction extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

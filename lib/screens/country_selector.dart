@@ -31,8 +31,11 @@ class _CountrySelectorState extends State<CountrySelector> {
 
   List<DropdownMenuItem<String>> _operatorTypedropDownMenuItems;
   String _currentOperatorType;
+  int _selected_operator_index;
 
   List _MapCountries = [];
+
+  String _payment_method = 'Methode de Paiement';
 
   @override
   void initState() {
@@ -109,7 +112,7 @@ class _CountrySelectorState extends State<CountrySelector> {
     String data = prefs.getString(key);
     if (data != null) {
       if (msg != "") {
-        showSnackBar(context, msg, status: false);
+        showSnackBar(context, msg, status: false, duration: 5);
       }
       return json.decode(data);
     }
@@ -131,7 +134,20 @@ class _CountrySelectorState extends State<CountrySelector> {
             color: Colors.white,
             size: 30,
           ),
-          onPressed: () {},
+          onPressed: () {
+            if (_currentCountry == null) {
+              showSnackBar(
+                  context, "Veuillez d'abord choisir votre pays de residence");
+              return;
+            }
+
+            if (_selected_operator_index == null) {
+              showSnackBar(
+                  context, "Veuillez d'abord choisir une methode de paiement",
+                  duration: 5);
+              return;
+            }
+          },
         ),
       ),
     );
@@ -166,11 +182,11 @@ class _CountrySelectorState extends State<CountrySelector> {
                 children: <Widget>[
                   _countryDropDown(),
                   SizedBox(
-                    height: 20,
+                    height: 50,
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 50),
-                    child: Text('Payer par ',
+                    child: Text(_payment_method,
                         style: TextStyle(
                             fontWeight: FontWeight.normal,
                             fontSize: 18,
@@ -192,9 +208,23 @@ class _CountrySelectorState extends State<CountrySelector> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Flexible(
-                            child: CustomButton(buttonType: ButtonType.banks)),
+                            child: InkWell(
+                          onTap: () =>
+                              setState(() => _selected_operator_index = 0),
+                          child: Container(
+                              decoration: _boxDecorationSelected(0),
+                              child:
+                                  CustomButton(buttonType: ButtonType.banks)),
+                        )),
                         Flexible(
-                            child: CustomButton(buttonType: ButtonType.mobile))
+                            child: InkWell(
+                          onTap: () =>
+                              setState(() => _selected_operator_index = 1),
+                          child: Container(
+                              decoration: _boxDecorationSelected(1),
+                              child:
+                                  CustomButton(buttonType: ButtonType.mobile)),
+                        ))
                       ],
                     ),
                   )
@@ -205,6 +235,18 @@ class _CountrySelectorState extends State<CountrySelector> {
           ),
         ),
       ],
+    );
+  }
+
+  _boxDecorationSelected(int index) {
+    return BoxDecoration(
+      border: Border.all(
+        color: _selected_operator_index == index
+            ? Colors.blue
+            : Colors.transparent,
+        width: 2.0,
+      ),
+      borderRadius: BorderRadius.circular(10.0),
     );
   }
 
