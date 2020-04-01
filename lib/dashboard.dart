@@ -1,4 +1,5 @@
 import 'package:codedecoders/scope/main_model.dart';
+import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/utils/style.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               child: CircleAvatar(
                                 backgroundImage: AssetImage(
-                                  "assets/user_profile.jpg",
+                                  USER_PROFILE_ASSET,
                                 ),
                               ),
                             )

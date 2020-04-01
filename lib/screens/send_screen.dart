@@ -1,7 +1,7 @@
 import 'package:codedecoders/utils/general.dart';
 import 'package:flutter/material.dart';
 
-import 'payee_container.dart';
+import 'banks_selector.dart';
 
 class SendScreen extends StatelessWidget {
   @override
@@ -34,7 +34,7 @@ class SendScreen extends StatelessWidget {
                 itemCount: 4,
                 itemBuilder: (context, payees) {
                   return ListTile(
-                    title: PayeeContainer(),
+                    title: Text(''),
                     onTap: () {},
                   );
                 },

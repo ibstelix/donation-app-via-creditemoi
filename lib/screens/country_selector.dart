@@ -5,6 +5,7 @@ import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/utils/style.dart';
 import 'package:codedecoders/widgets/custom_button.dart';
+import 'package:codedecoders/widgets/loading_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,8 +23,8 @@ class CountrySelector extends StatefulWidget {
 
 class _CountrySelectorState extends State<CountrySelector> {
   bool _loading = false;
-
   String _appBarText = "Etape 1";
+
   Map _default_ip_data;
 
   List<DropdownMenuItem<String>> _countrydropDownMenuItems;
@@ -34,6 +35,7 @@ class _CountrySelectorState extends State<CountrySelector> {
   int _selected_operator_index;
 
   List _MapCountries = [];
+  List _operatorsTypes = ["banks", "mobile"];
 
   String _payment_method = 'Methode de Paiement';
 
@@ -124,7 +126,12 @@ class _CountrySelectorState extends State<CountrySelector> {
     return SafeArea(
       child: Scaffold(
         body: Stack(
-          children: <Widget>[_bodyContent(context), _loadingSpinner()],
+          children: <Widget>[
+            _bodyContent(context),
+            LoadingSpinner(
+              loading: _loading,
+            )
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
@@ -147,6 +154,11 @@ class _CountrySelectorState extends State<CountrySelector> {
                   duration: 5);
               return;
             }
+
+            widget.model.selected_country_code = _currentCountry;
+            var selected_op_type = _operatorsTypes[_selected_operator_index];
+            widget.model.selected_operator_type = selected_op_type;
+            Navigator.pushNamed(context, "/$selected_op_type");
           },
         ),
       ),
@@ -281,28 +293,6 @@ class _CountrySelectorState extends State<CountrySelector> {
             ),
           )),
         ],
-      ),
-    );
-  }
-
-  Widget _loadingSpinner() {
-    return Visibility(
-      visible: _loading ?? true,
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          color: Colors.white.withOpacity(0.9),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-              ),
-              SizedBox(height: 10),
-              Text("chargement")
-            ],
-          ),
-        ),
       ),
     );
   }
