@@ -45,6 +45,7 @@ class _BanksSelectorState extends State<BanksSelector> {
               return;
             }
             widget.model.selected_bank_id = _selected_bank_index;
+            Navigator.pushNamed(context, "/card-form");
           },
         ),
       ),
@@ -104,7 +105,7 @@ class _BanksSelectorState extends State<BanksSelector> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
