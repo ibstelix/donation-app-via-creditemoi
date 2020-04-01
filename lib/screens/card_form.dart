@@ -59,6 +59,18 @@ class _CardFormState extends State<CardForm> {
             )
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          elevation: 2,
+          child: Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            _validateInputs();
+          },
+        ),
       ),
     );
   }
@@ -229,10 +241,10 @@ class _CardFormState extends State<CardForm> {
               new SizedBox(
                 height: 50.0,
               ),
-              new Container(
+              /*new Container(
                 alignment: Alignment.center,
                 child: _getPayButton(),
-              )
+              )*/
             ],
           )),
     );
@@ -258,6 +270,11 @@ class _CardFormState extends State<CardForm> {
       form.save();
       // Encrypt and send send payment details to payment gateway
       _showInSnackBar('Payment card is valid');
+      print('card values is $_card');
+      print('payment values is $_paymentCard');
+      widget.model.card = _card;
+      widget.model.paymentCard = _paymentCard;
+      Navigator.pushNamed(context, "/amount-form/4");
     }
   }
 

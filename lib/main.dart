@@ -1,6 +1,7 @@
 import 'package:alice/alice.dart';
 import 'package:codedecoders/dashboard.dart';
 import 'package:codedecoders/scope/main_model.dart';
+import 'package:codedecoders/screens/amount_form.dart';
 import 'package:codedecoders/screens/banks_selector.dart';
 import 'package:codedecoders/screens/card_form.dart';
 import 'package:codedecoders/screens/country_selector.dart';
@@ -55,6 +56,22 @@ class MyApp extends StatelessWidget {
           '/card-form': (BuildContext context) => CardForm(
                 model: _model,
               ),
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          final List<String> pathElements = settings.name.split('/');
+          if (pathElements[0] != '') {
+            return null;
+          }
+
+          if (pathElements[1] == 'amount-form') {
+            final int step_index = int.parse(pathElements[2]);
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) =>
+                  AmountForm(model: _model, stepIndex: step_index),
+            );
+          }
+
+          return null;
         },
       ),
     );

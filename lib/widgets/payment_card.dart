@@ -194,12 +194,14 @@ class CardUtils {
   /// https://en.wikipedia.org/wiki/Luhn_algorithm
   static String validateCardNum(String input) {
     if (input.isEmpty) {
+//      print('input empty');
       return fieldReq;
     }
 
     input = getCleanedNumber(input);
 
     if (input.length < 8) {
+//      print('input length lower than 8');
       return numberIsInvalid;
     }
 
@@ -215,6 +217,8 @@ class CardUtils {
       }
       sum += digit > 9 ? (digit - 9) : digit;
     }
+
+    print('sum module is ${sum % 10}');
 
     if (sum % 10 == 0) {
       return null;

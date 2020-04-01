@@ -10,3 +10,5 @@ const USER_PROFILE_ASSET = "assets/user_profile.jpg";
 const String fieldReq = 'This field is required';
 const String numberIsInvalid = 'Card is invalid';
 const String PAY = 'Payer';
+
+const String default_anon_user = "creditemoi";
