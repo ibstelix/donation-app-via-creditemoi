@@ -5,6 +5,7 @@ import 'package:codedecoders/screens/amount_form.dart';
 import 'package:codedecoders/screens/banks_selector.dart';
 import 'package:codedecoders/screens/card_form.dart';
 import 'package:codedecoders/screens/country_selector.dart';
+import 'package:codedecoders/screens/operator_form.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'homePage.dart';
@@ -38,22 +39,28 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         routes: {
-          '/': (BuildContext context) => Login(
+          '/': (BuildContext context) =>
+              Login(
                 model: _model,
               ),
-          '/home': (BuildContext context) => Dashboard(
+          '/home': (BuildContext context) =>
+              Dashboard(
                 model: _model,
               ),
-          '/country': (BuildContext context) => CountrySelector(
+          '/country': (BuildContext context) =>
+              CountrySelector(
                 model: _model,
               ),
-          '/banks': (BuildContext context) => BanksSelector(
+          '/banks': (BuildContext context) =>
+              BanksSelector(
                 model: _model,
               ),
-          '/mobile': (BuildContext context) => BanksSelector(
+          '/mobile': (BuildContext context) =>
+              OperatorForm(
                 model: _model,
               ),
-          '/card-form': (BuildContext context) => CardForm(
+          '/card-form': (BuildContext context) =>
+              CardForm(
                 model: _model,
               ),
         },

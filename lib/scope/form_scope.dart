@@ -10,6 +10,15 @@ class FormScope extends Model {
 
   PaymentCard _card;
 
+  bool _aconnected;
+
+  bool get aconnected => _aconnected;
+
+  set aconnected(bool value) {
+    _aconnected = value;
+    notifyListeners();
+  }
+
   PaymentCard get paymentCard => _paymentCard;
 
   set paymentCard(PaymentCard value) {

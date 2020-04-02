@@ -10,28 +10,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AmountForm extends StatefulWidget {
+class OperatorForm extends StatefulWidget {
   final MainModel model;
-  final int stepIndex;
 
-  const AmountForm({Key key, this.model, this.stepIndex = 0}) : super(key: key);
+  const OperatorForm({Key key, this.model}) : super(key: key);
 
   @override
-  _AmountFormState createState() => _AmountFormState();
+  _OperatorFormState createState() => _OperatorFormState();
 }
 
-class _AmountFormState extends State<AmountForm> {
-  String _appBarText = "";
+class _OperatorFormState extends State<OperatorForm> {
+  String _appBarText = "Etape 2";
   bool _loading = false;
   var _formKey = new GlobalKey<FormState>();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var _amountController = new TextEditingController();
 
+  List<DropdownMenuItem<String>> _operatorsdropDownMenuItems;
+  List<DropdownMenuItem<String>> _groupdropDownMenuItems;
+  String _currentOperator;
+  String _currentGroup;
+  Map _selectedOperator;
+
   @override
   void initState() {
     super.initState();
-    _appBarText = "Etape ${widget.stepIndex}";
   }
 
   @override
@@ -119,7 +123,6 @@ class _AmountFormState extends State<AmountForm> {
                 height: 20.0,
               ),
               new TextFormField(
-                controller: _amountController,
                 inputFormatters: [
                   WhitelistingTextInputFormatter.digitsOnly,
                 ],
@@ -142,6 +145,36 @@ class _AmountFormState extends State<AmountForm> {
             ],
           )),
     );
+  }
+
+  void _anonymeAuthenticate(BuildContext context) async {
+    var connected = widget.model.aconnected;
+    print('checking connected....$connected');
+
+    /* if (connected) {
+      _processData();
+    } else {
+      _reconnectAnonymous();
+    }*/
+  }
+
+  void _reconnectAnonymous() async {
+    /* Map<String, dynamic> sendData = {
+      'pseudo': default_anon_user,
+      'password': 'rdcdev!!?',
+    };
+    var auth_status = await widget.model.anonymous_authenticate(sendData);
+    checkErrorMessge(auth_status);
+
+    if (auth_status['status']) {
+      var user_status = await widget.model.get_user_info(anonymous: true);
+      checkErrorMessge(user_status);
+      if (user_status['status']) {
+        _anonymous_user = user_status['msg'];
+        //success
+        _processData();
+      }
+    }*/
   }
 
   void _validateInputs() {
@@ -188,5 +221,17 @@ class _AmountFormState extends State<AmountForm> {
       content: new Text(value),
       duration: new Duration(seconds: 3),
     ));
+  }
+
+  checkErrorMessge(res) {
+    setState(() {
+      _loading = false;
+    });
+    if (!res['status']) {
+      var msg = res.containsKey('msg')
+          ? res['msg']
+          : "Une Erreur s'est produite. Veuillez contacter l'Admin";
+//      Navigator.of(_scaffoldKey.currentContext).pop(msg);
+    }
   }
 }
