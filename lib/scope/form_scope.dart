@@ -10,7 +10,23 @@ class FormScope extends Model {
 
   PaymentCard _card;
 
-  bool _aconnected;
+  bool _aconnected = false;
+  Map _anonymous_user;
+  List _aServiceProviders = [];
+
+  List get aServiceProviders => List.from(_aServiceProviders);
+
+  set aServiceProviders(List value) {
+    _aServiceProviders = value;
+    notifyListeners();
+  }
+
+  Map get anonymous_user => _anonymous_user;
+
+  set anonymous_user(Map value) {
+    _anonymous_user = value;
+    notifyListeners();
+  }
 
   bool get aconnected => _aconnected;
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
@@ -9,6 +10,7 @@ import 'package:codedecoders/widgets/payment_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OperatorForm extends StatefulWidget {
   final MainModel model;
@@ -19,7 +21,8 @@ class OperatorForm extends StatefulWidget {
   _OperatorFormState createState() => _OperatorFormState();
 }
 
-class _OperatorFormState extends State<OperatorForm> {
+class _OperatorFormState extends State<OperatorForm>
+    with AfterLayoutMixin<OperatorForm> {
   String _appBarText = "Etape 2";
   bool _loading = false;
   var _formKey = new GlobalKey<FormState>();
@@ -32,6 +35,15 @@ class _OperatorFormState extends State<OperatorForm> {
   String _currentOperator;
   String _currentGroup;
   Map _selectedOperator;
+  List _listServiceProviders = [];
+  List _selectedServiceProviders;
+
+  List _listCountries = [];
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _anonymeAuthenticate(context);
+  }
 
   @override
   void initState() {
@@ -72,7 +84,7 @@ class _OperatorFormState extends State<OperatorForm> {
 //          itemExtent: 100.0,
           delegate: SliverChildListDelegate(
             [
-              Padding(
+              /*Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,16 +103,12 @@ class _OperatorFormState extends State<OperatorForm> {
                     )
                   ],
                 ),
-              ),
+              ),*/
               Divider(
                 height: 2,
               ),
               SizedBox(
                 height: 20,
-              ),
-              _formView(),
-              SizedBox(
-                height: 30,
               ),
               Container(color: Colors.grey.withOpacity(0.3)),
             ],
@@ -110,118 +118,107 @@ class _OperatorFormState extends State<OperatorForm> {
     );
   }
 
-  Widget _formView() {
-    return new Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: new Form(
-          key: _formKey,
-          child: new ListView(
-            shrinkWrap: true,
-            physics: BouncingScrollPhysics(),
-            children: <Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              new TextFormField(
-                inputFormatters: [
-                  WhitelistingTextInputFormatter.digitsOnly,
-                ],
-                decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  filled: true,
-                  icon: Icon(Icons.dialpad),
-                  hintText: 'Votre donation',
-                  labelText: 'Montant',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(
-                height: 80.0,
-              ),
-              new Container(
-                alignment: Alignment.center,
-                child: _getPayButton(),
-              )
-            ],
-          )),
-    );
-  }
-
   void _anonymeAuthenticate(BuildContext context) async {
     var connected = widget.model.aconnected;
     print('checking connected....$connected');
 
-    /* if (connected) {
+    if (connected) {
       _processData();
     } else {
       _reconnectAnonymous();
-    }*/
+    }
   }
 
   void _reconnectAnonymous() async {
-    /* Map<String, dynamic> sendData = {
+    setState(() {
+      _loading = true;
+    });
+    Map<String, dynamic> sendData = {
       'pseudo': default_anon_user,
       'password': 'rdcdev!!?',
     };
-    var auth_status = await widget.model.anonymous_authenticate(sendData);
-    checkErrorMessge(auth_status);
+    String url = '${baseurl}public/auth';
+    var auth_res = await widget.model.post_api(sendData, url);
+    print('auth_res is $auth_res');
+    checkErrorMessge(auth_res);
 
-    if (auth_status['status']) {
-      var user_status = await widget.model.get_user_info(anonymous: true);
-      checkErrorMessge(user_status);
-      if (user_status['status']) {
-        _anonymous_user = user_status['msg'];
+    if (auth_res['status']) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      widget.model.aconnected = true;
+      prefs.setBool(CONNECTED_KEY, true);
+      prefs.setString(TOKEN, auth_res['msg']['token']);
+
+      var user_url = '${baseurl}auth/me';
+      var user_res = await widget.model.get_api(user_url, true);
+      print('user_res is $user_res');
+      checkErrorMessge(user_res);
+      if (user_res['status']) {
+        widget.model.anonymous_user = user_res['msg'];
         //success
         _processData();
       }
-    }*/
-  }
-
-  void _validateInputs() {
-    final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      _showInSnackBar('Please fix the errors in red before submitting.');
-    } else {
-      form.save();
-      // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment card is valid');
     }
   }
 
-  Widget _getPayButton() {
-    if (Platform.isIOS) {
-      return new CupertinoButton(
-        onPressed: _validateInputs,
-        color: CupertinoColors.activeBlue,
-        child: const Text(
-          PAY,
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
+  void _processData() async {
+    if (widget.model.aServiceProviders.length == 0) {
+      var url = '${baseurl}auth/service_providers';
+      print('get API Data service_providers');
+      var res = await widget.model.get_api(url, true);
+      checkErrorMessge(res);
+
+      if (res['status']) {
+        setState(() {
+          _loading = false;
+        });
+
+        List data = res['msg'];
+        if (data.length == 0) {
+          showSnackBar(context, "Aucun operateur trouvé",
+              status: false, duration: 5);
+        } else {
+          widget.model.aServiceProviders = data;
+          _processServicePRovidersData(data);
+        }
+      }
     } else {
-      return new RaisedButton(
-        onPressed: _validateInputs,
-        color: Colors.blue,
-        splashColor: Colors.deepPurple,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(const Radius.circular(100.0)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 80.0),
-        textColor: Colors.white,
-        child: new Text(
-          PAY.toUpperCase(),
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
+      setState(() {
+        _loading = false;
+      });
+      _processServicePRovidersData(widget.model.aServiceProviders);
     }
   }
 
-  void _showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(value),
-      duration: new Duration(seconds: 3),
-    ));
+  void _processServicePRovidersData(data) {
+    _listServiceProviders = data;
+    var listCountries = [];
+    for (var val in data) {
+      var country = val['country'];
+      listCountries.add(country);
+    }
+
+    _listCountries = Set.of(listCountries).toList();
+    print('listcountries is $_listCountries');
+    var mapCountryCode = _listCountries.firstWhere(
+        (i) => i.toUpperCase() == widget.model.selected_country_code,
+        orElse: () => null);
+    print(
+        'mapcountrycode is ${widget.model.selected_country_code} \n$mapCountryCode');
+
+    if (mapCountryCode != null) {
+      _selectedServiceProviders = _listServiceProviders
+          .where((i) => i['country'] == mapCountryCode)
+          .toList();
+      setState(() {
+        print('selected providers $_selectedServiceProviders');
+      });
+    } else {
+      showSnackBar(context, "Aucun operateur supporté pour votre pays",
+          status: false, duration: 5);
+    }
   }
+
+  void _validateInputs() {}
 
   checkErrorMessge(res) {
     setState(() {

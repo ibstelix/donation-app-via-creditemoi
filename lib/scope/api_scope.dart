@@ -26,11 +26,11 @@ class ApiScope extends Model {
     }
   }
 
-  Future<Map> post_token(Map data, String url) async {
+  Future<Map> post_api(Map data, String url, [has_token = false]) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = prefs.getString(TOKEN);
-      if (token == null) {
+      if (has_token && token == null) {
         return raisedException("Erreur de Token", url);
       }
 
@@ -54,6 +54,7 @@ class ApiScope extends Model {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = prefs.getString(TOKEN);
+      print("token is $has_token && $token");
       if (has_token && token == null) {
         return raisedException("Erreur de Token", url);
       }
@@ -61,14 +62,28 @@ class ApiScope extends Model {
       http.Response response =
           await http.get(url, headers: has_token ? getHeaders(token) : {});
       alice.onHttpResponse(response);
+      var resultat;
 
-      final Map<String, dynamic> res = json.decode(response.body);
-//      print("resultat map is $res");
+      try {
+        final Map<String, dynamic> res = json.decode(response.body);
+        print("resultat map is $res");
+        resultat = res;
+      } catch (exc) {
+        var res = json.decode(response.body);
+        resultat = res;
+      }
+
+      print("resultat map is $resultat");
 
       if (response.statusCode != 200) {
-        return raisedException(res['msg'], url);
+        return raisedException(
+            resultat.runtimeType != Map
+                ? "Erreur reponse Http"
+                : resultat['msg'],
+            url);
       }
-      return {"status": true, "msg": res};
+
+      return {"status": true, "msg": resultat};
     } catch (err) {
       return errorException(err);
     }

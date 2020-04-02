@@ -261,55 +261,24 @@ class _CardFormState extends State<CardForm> {
 
   void _validateInputs() {
     final FormState form = _formKey.currentState;
+    var msg;
     if (!form.validate()) {
       setState(() {
         _autoValidate = true; // Start validating on every change.
       });
-      _showInSnackBar('Please fix the errors in red before submitting.');
+      msg = 'Please fix the errors in red before submitting.';
+      showSnackBar(context, msg, status: false, duration: 5);
     } else {
       form.save();
       // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment card is valid');
-      print('card values is $_card');
-      print('payment values is $_paymentCard');
+      msg = 'La carte de paiement est valide';
+      showSnackBar(context, msg, status: false, duration: 5);
+
+//      print('card values is $_card');
+//      print('payment values is $_paymentCard');
       widget.model.card = _card;
       widget.model.paymentCard = _paymentCard;
       Navigator.pushNamed(context, "/amount-form/4");
     }
-  }
-
-  Widget _getPayButton() {
-    if (Platform.isIOS) {
-      return new CupertinoButton(
-        onPressed: _validateInputs,
-        color: CupertinoColors.activeBlue,
-        child: const Text(
-          PAY,
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    } else {
-      return new RaisedButton(
-        onPressed: _validateInputs,
-        color: Colors.blue,
-        splashColor: Colors.deepPurple,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(const Radius.circular(100.0)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 80.0),
-        textColor: Colors.white,
-        child: new Text(
-          PAY.toUpperCase(),
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    }
-  }
-
-  void _showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(value),
-      duration: new Duration(seconds: 3),
-    ));
   }
 }
