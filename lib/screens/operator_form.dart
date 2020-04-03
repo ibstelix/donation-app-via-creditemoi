@@ -5,6 +5,7 @@ import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/widgets/input_formatters.dart';
+import 'package:codedecoders/widgets/item_to_buy_card.dart';
 import 'package:codedecoders/widgets/loading_spinner.dart';
 import 'package:codedecoders/widgets/payment_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,10 +36,14 @@ class _OperatorFormState extends State<OperatorForm>
   String _currentOperator;
   String _currentGroup;
   Map _selectedOperator;
+
   List _listServiceProviders = [];
-  List _selectedServiceProviders;
+  List _selectedServiceProviders = [];
 
   List _listCountries = [];
+
+  List _selectedProviderItems = [];
+  Map _selectredItem;
 
   @override
   void afterFirstLayout(BuildContext context) {
@@ -62,6 +67,33 @@ class _OperatorFormState extends State<OperatorForm>
               loading: _loading,
             )
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          elevation: 2,
+          child: Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            if (_selectedOperator == null) {
+              showSnackBar(context, "Veuillez d'abord choisir un operateur");
+              return;
+            }
+
+            if (_selectredItem == null) {
+              showSnackBar(
+                  context, "Veuillez d'abord choisir un service de paiement",
+                  duration: 5);
+              return;
+            }
+
+            /* widget.model.selected_country_code = _currentCountry;
+            var selected_op_type = _operatorsTypes[_selected_operator_index];
+            widget.model.selected_operator_type = selected_op_type;
+            Navigator.pushNamed(context, "/$selected_op_type");*/
+          },
         ),
       ),
     );
@@ -104,8 +136,20 @@ class _OperatorFormState extends State<OperatorForm>
                   ],
                 ),
               ),*/
-              Divider(
-                height: 2,
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: _operatorsDropDown(),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _buildGridViewCards(),
               ),
               SizedBox(
                 height: 20,
@@ -116,6 +160,71 @@ class _OperatorFormState extends State<OperatorForm>
         ),
       ],
     );
+  }
+
+  Widget _operatorsDropDown() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.5),
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: SizedBox(
+                child: ButtonTheme(
+                  alignedDropdown: true,
+                  child: new DropdownButton(
+                    isExpanded: true,
+//                              style: Theme.of(context).textTheme.title,
+                    hint: new Text("Operateur"),
+                    value: _currentOperator,
+                    items: _operatorsdropDownMenuItems,
+                    onChanged: _operatorChangedDropDownItem,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGridViewCards() {
+    var selectedIndex = 0;
+    print('1. selected index is $selectedIndex');
+
+    return GridView.builder(
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        itemCount: _selectedProviderItems.length,
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        itemBuilder: (context, i) {
+          Map<String, dynamic> servItem = _selectedProviderItems[i];
+          return InkWell(
+            onTap: () {
+              setState(() {
+                if (_selectredItem == servItem) {
+                  _selectredItem = null;
+                } else {
+                  _selectredItem = servItem;
+                }
+              });
+            },
+            child: ItemToBuyCard(
+                checked: _selectredItem != null &&
+                    _selectredItem['id'] == servItem['id'],
+                model: widget.model,
+                data: _selectedProviderItems[i],
+                context: context),
+          );
+        });
   }
 
   void _anonymeAuthenticate(BuildContext context) async {
@@ -211,11 +320,87 @@ class _OperatorFormState extends State<OperatorForm>
           .toList();
       setState(() {
         print('selected providers $_selectedServiceProviders');
+        _operatorsdropDownMenuItems =
+            _getOperatorsDropDownMenuItems(_selectedServiceProviders);
+        _groupdropDownMenuItems =
+            _getGroupeYpeDropDownMenuItems(_selectedServiceProviders);
       });
     } else {
       showSnackBar(context, "Aucun operateur supporté pour votre pays",
           status: false, duration: 5);
     }
+  }
+
+  List<DropdownMenuItem<String>> _getOperatorsDropDownMenuItems(
+      List<dynamic> data) {
+    List<DropdownMenuItem<String>> items = new List();
+
+    items.add(new DropdownMenuItem(
+        value: 'all',
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Text("-- Tous --", overflow: TextOverflow.ellipsis),
+        )));
+
+    for (var val in data) {
+//      print('dropdown item $val');
+
+      var leadingIc = Image.network(
+        val['logo'],
+        width: 30,
+      );
+
+      items.add(new DropdownMenuItem(
+          value: val['name'],
+          child: Row(
+            children: <Widget>[
+              leadingIc,
+              SizedBox(
+                width: 10,
+              ),
+              new Text(val['name'], overflow: TextOverflow.ellipsis),
+            ],
+          )));
+    }
+    return items;
+  }
+
+  List<DropdownMenuItem<String>> _getGroupeYpeDropDownMenuItems(
+      List<dynamic> data) {
+    List<DropdownMenuItem<String>> items = new List();
+
+    for (var val in data) {
+      items.add(new DropdownMenuItem(
+          value: val['name'],
+          child: Text(val['name'], overflow: TextOverflow.ellipsis)));
+    }
+    return items;
+  }
+
+  void _operatorChangedDropDownItem(String selected) {
+    print("Selected operator  $selected");
+    setState(() {
+      _selectedProviderItems = [];
+      _selectredItem = null;
+    });
+    _selectedOperator = _selectedServiceProviders
+        .firstWhere((i) => i['name'] == selected, orElse: () => null);
+
+    print('selected providers $_selectedOperator');
+
+    setState(() {
+      if (_selectedOperator != null) {
+        _selectedProviderItems = _selectedOperator['items']
+            .where((i) => i['is_withdrawable'] == 0)
+            .toList();
+      } else {
+        if (selected == 'all') {
+          _selectedServiceProviders.forEach((mp) => _selectedProviderItems +=
+              mp['items'].where((i) => i['is_withdrawable'] == 0).toList());
+        }
+      }
+      _currentOperator = selected;
+    });
   }
 
   void _validateInputs() {}

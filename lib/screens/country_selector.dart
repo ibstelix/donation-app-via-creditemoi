@@ -317,7 +317,7 @@ class _CountrySelectorState extends State<CountrySelector> {
               SizedBox(
                 width: 10,
               ),
-              new Text(country['Name']),
+              new Text(country['Name'], overflow: TextOverflow.ellipsis),
             ],
           )));
     }
