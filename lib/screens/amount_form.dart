@@ -56,7 +56,7 @@ class _AmountFormState extends State<AmountForm> {
       slivers: <Widget>[
         SliverAppBar(
           backgroundColor: HexColor.fromHex("#062b66"),
-          expandedHeight: 130.0,
+          expandedHeight: HEADER_HEIGHT,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
@@ -92,7 +92,7 @@ class _AmountFormState extends State<AmountForm> {
                 height: 2,
               ),
               SizedBox(
-                height: 20,
+                height: 50,
               ),
               _formView(),
               SizedBox(

@@ -57,7 +57,7 @@ class _BanksSelectorState extends State<BanksSelector> {
       slivers: <Widget>[
         SliverAppBar(
           backgroundColor: HexColor.fromHex("#062b66"),
-          expandedHeight: 150.0,
+          expandedHeight: HEADER_HEIGHT,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(

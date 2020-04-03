@@ -80,7 +80,7 @@ class _CardFormState extends State<CardForm> {
       slivers: <Widget>[
         SliverAppBar(
           backgroundColor: HexColor.fromHex("#062b66"),
-          expandedHeight: 130.0,
+          expandedHeight: HEADER_HEIGHT,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(

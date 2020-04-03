@@ -174,7 +174,7 @@ class _CountrySelectorState extends State<CountrySelector> {
             style: TextStyle(fontSize: 18),
           ),*/
           backgroundColor: Colors.grey[100],
-          expandedHeight: 150.0,
+          expandedHeight: HEADER_HEIGHT,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
