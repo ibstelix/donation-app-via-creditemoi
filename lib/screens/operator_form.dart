@@ -43,7 +43,7 @@ class _OperatorFormState extends State<OperatorForm>
   List _listCountries = [];
 
   List _selectedProviderItems = [];
-  Map _selectredItem;
+  Map _selectedItem;
 
   @override
   void afterFirstLayout(BuildContext context) {
@@ -82,12 +82,14 @@ class _OperatorFormState extends State<OperatorForm>
               return;
             }
 
-            if (_selectredItem == null) {
+            if (_selectedItem == null) {
               showSnackBar(
                   context, "Veuillez d'abord choisir un service de paiement",
                   duration: 5);
               return;
             }
+
+            Navigator.pushNamed(context, "/amount-form/3");
 
             /* widget.model.selected_country_code = _currentCountry;
             var selected_op_type = _operatorsTypes[_selected_operator_index];
@@ -210,16 +212,16 @@ class _OperatorFormState extends State<OperatorForm>
           return InkWell(
             onTap: () {
               setState(() {
-                if (_selectredItem == servItem) {
-                  _selectredItem = null;
+                if (_selectedItem == servItem) {
+                  _selectedItem = null;
                 } else {
-                  _selectredItem = servItem;
+                  _selectedItem = servItem;
                 }
               });
             },
             child: ItemToBuyCard(
-                checked: _selectredItem != null &&
-                    _selectredItem['id'] == servItem['id'],
+                checked: _selectedItem != null &&
+                    _selectedItem['id'] == servItem['id'],
                 model: widget.model,
                 data: _selectedProviderItems[i],
                 context: context),
@@ -381,7 +383,7 @@ class _OperatorFormState extends State<OperatorForm>
     print("Selected operator  $selected");
     setState(() {
       _selectedProviderItems = [];
-      _selectredItem = null;
+      _selectedItem = null;
     });
     _selectedOperator = _selectedServiceProviders
         .firstWhere((i) => i['name'] == selected, orElse: () => null);

@@ -14,6 +14,17 @@ class FormScope extends Model {
   Map _anonymous_user;
   List _aServiceProviders = [];
 
+  Map _selectedOperator;
+
+  Map _selectedItem;
+
+  Map get selectedOperator => _selectedOperator;
+
+  set selectedOperator(Map value) {
+    _selectedOperator = value;
+    notifyListeners();
+  }
+
   List get aServiceProviders => List.from(_aServiceProviders);
 
   set aServiceProviders(List value) {
@@ -67,6 +78,13 @@ class FormScope extends Model {
 
   set card(PaymentCard value) {
     _card = value;
+    notifyListeners();
+  }
+
+  Map get selectedItem => _selectedItem;
+
+  set selectedItem(Map value) {
+    _selectedItem = value;
     notifyListeners();
   }
 }
