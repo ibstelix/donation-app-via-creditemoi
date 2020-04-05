@@ -4,6 +4,7 @@ import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/screens/amount_form.dart';
 import 'package:codedecoders/screens/banks_selector.dart';
 import 'package:codedecoders/screens/card_form.dart';
+import 'package:codedecoders/screens/confirmation_form.dart';
 import 'package:codedecoders/screens/country_selector.dart';
 import 'package:codedecoders/screens/operator_form.dart';
 import 'package:flutter/material.dart';
@@ -39,28 +40,22 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         routes: {
-          '/': (BuildContext context) =>
-              Login(
+          '/': (BuildContext context) => Login(
                 model: _model,
               ),
-          '/home': (BuildContext context) =>
-              Dashboard(
+          '/home': (BuildContext context) => Dashboard(
                 model: _model,
               ),
-          '/country': (BuildContext context) =>
-              CountrySelector(
+          '/country': (BuildContext context) => CountrySelector(
                 model: _model,
               ),
-          '/banks': (BuildContext context) =>
-              BanksSelector(
+          '/banks': (BuildContext context) => BanksSelector(
                 model: _model,
               ),
-          '/mobile': (BuildContext context) =>
-              OperatorForm(
+          '/mobile': (BuildContext context) => OperatorForm(
                 model: _model,
               ),
-          '/card-form': (BuildContext context) =>
-              CardForm(
+          '/card-form': (BuildContext context) => CardForm(
                 model: _model,
               ),
         },
@@ -75,6 +70,14 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) =>
                   AmountForm(model: _model, stepIndex: step_index),
+            );
+          }
+
+          if (pathElements[1] == 'confirmation-form') {
+            final String type = pathElements[2];
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) =>
+                  ConfirmationForm(model: _model, type: type),
             );
           }
 

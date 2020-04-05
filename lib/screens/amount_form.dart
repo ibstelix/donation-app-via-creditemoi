@@ -47,6 +47,30 @@ class _AmountFormState extends State<AmountForm> {
             )
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          elevation: 2,
+          child: Icon(
+            Icons.arrow_forward,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            if (!isNumeric(_amountController.text)) {
+              showSnackBar(context, "Veuillez d'abord saisir un montant valide",
+                  duration: 5);
+              return;
+            }
+            widget.model.amount = double.tryParse(_amountController.text);
+
+            Navigator.pushNamed(context, "/confirmation-form/Bank");
+
+            /* widget.model.selected_country_code = _currentCountry;
+            var selected_op_type = _operatorsTypes[_selected_operator_index];
+            widget.model.selected_operator_type = selected_op_type;
+            Navigator.pushNamed(context, "/$selected_op_type");*/
+          },
+        ),
       ),
     );
   }
@@ -135,52 +159,13 @@ class _AmountFormState extends State<AmountForm> {
               SizedBox(
                 height: 80.0,
               ),
-              new Container(
+              /* new Container(
                 alignment: Alignment.center,
                 child: _getPayButton(),
-              )
+              )*/
             ],
           )),
     );
-  }
-
-  void _validateInputs() {
-    final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      _showInSnackBar('Please fix the errors in red before submitting.');
-    } else {
-      form.save();
-      // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment card is valid');
-    }
-  }
-
-  Widget _getPayButton() {
-    if (Platform.isIOS) {
-      return new CupertinoButton(
-        onPressed: _validateInputs,
-        color: CupertinoColors.activeBlue,
-        child: const Text(
-          PAY,
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    } else {
-      return new RaisedButton(
-        onPressed: _validateInputs,
-        color: Colors.blue,
-        splashColor: Colors.deepPurple,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(const Radius.circular(100.0)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 80.0),
-        textColor: Colors.white,
-        child: new Text(
-          PAY.toUpperCase(),
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    }
   }
 
   void _showInSnackBar(String value) {

@@ -145,7 +145,7 @@ class _CardFormState extends State<CardForm> {
               ),
               new TextFormField(
                 decoration: const InputDecoration(
-                  border: const UnderlineInputBorder(),
+                  border: InputBorder.none,
                   filled: true,
                   icon: const Icon(
                     Icons.person,

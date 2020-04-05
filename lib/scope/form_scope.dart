@@ -3,6 +3,8 @@ import 'package:scoped_model/scoped_model.dart';
 
 class FormScope extends Model {
   String _selected_country_code;
+  Map _selected_country;
+
   String _selected_operator_type;
   int _selected_bank_id;
 
@@ -17,6 +19,27 @@ class FormScope extends Model {
   Map _selectedOperator;
 
   Map _selectedItem;
+
+  double _amount;
+  String _phone_number;
+
+  /**
+   * GETTER AND SETTER
+   */
+
+  Map get selected_country => _selected_country;
+
+  set selected_country(Map value) {
+    _selected_country = value;
+    notifyListeners();
+  }
+
+  double get amount => _amount;
+
+  set amount(double value) {
+    _amount = value;
+    notifyListeners();
+  }
 
   Map get selectedOperator => _selectedOperator;
 
@@ -85,6 +108,13 @@ class FormScope extends Model {
 
   set selectedItem(Map value) {
     _selectedItem = value;
+    notifyListeners();
+  }
+
+  String get phone_number => _phone_number;
+
+  set phone_number(String value) {
+    _phone_number = value;
     notifyListeners();
   }
 }

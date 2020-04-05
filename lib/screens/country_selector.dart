@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
-import 'package:codedecoders/utils/style.dart';
 import 'package:codedecoders/widgets/custom_button.dart';
 import 'package:codedecoders/widgets/loading_spinner.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ class _CountrySelectorState extends State<CountrySelector> {
   String _appBarText = "Etape 1";
 
   Map _default_ip_data;
+  Map _selected_country;
 
   List<DropdownMenuItem<String>> _countrydropDownMenuItems;
   String _currentCountry;
@@ -156,6 +156,7 @@ class _CountrySelectorState extends State<CountrySelector> {
             }
 
             widget.model.selected_country_code = _currentCountry;
+            widget.model.selected_country = _selected_country;
             var selected_op_type = _operatorsTypes[_selected_operator_index];
             widget.model.selected_operator_type = selected_op_type;
             Navigator.pushNamed(context, "/$selected_op_type");
@@ -325,16 +326,17 @@ class _CountrySelectorState extends State<CountrySelector> {
   }
 
   void _countryChangedDropDownItem(String selected) {
-    var operatorsFound = [];
     setState(() {});
 
-    var mapCountry = _MapCountries.firstWhere((i) => i['name'] == selected,
+    var mapCountry = _MapCountries.firstWhere(
+        (i) => i['Alpha2Code'] == selected,
         orElse: () => null);
 
-    if (mapCountry != null) {}
-
-    setState(() {
-      _currentCountry = selected;
-    });
+    if (mapCountry != null) {
+      _selected_country = mapCountry;
+      setState(() {
+        _currentCountry = selected;
+      });
+    }
   }
 }

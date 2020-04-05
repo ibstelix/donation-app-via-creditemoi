@@ -30,6 +30,7 @@ class _OperatorFormState extends State<OperatorForm>
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var _amountController = new TextEditingController();
+  var _phoneController = new TextEditingController();
 
   List<DropdownMenuItem<String>> _operatorsdropDownMenuItems;
   List<DropdownMenuItem<String>> _groupdropDownMenuItems;
@@ -82,14 +83,23 @@ class _OperatorFormState extends State<OperatorForm>
               return;
             }
 
-            if (_selectedItem == null) {
+            if (_phoneController.text.isEmpty) {
               showSnackBar(
-                  context, "Veuillez d'abord choisir un service de paiement",
+                  context, "Veuillez d'abord saisir un numero de telephone",
                   duration: 5);
               return;
             }
 
-            Navigator.pushNamed(context, "/amount-form/3");
+            print(isNumeric(_amountController.text));
+            if (!isNumeric(_amountController.text)) {
+              showSnackBar(context, "Veuillez d'abord saisir un montant valide",
+                  duration: 5);
+              return;
+            }
+            widget.model.amount = double.tryParse(_amountController.text);
+            widget.model.phone_number = _phoneController.text;
+
+            Navigator.pushNamed(context, "/confirmation-form/Mobile");
 
             /* widget.model.selected_country_code = _currentCountry;
             var selected_op_type = _operatorsTypes[_selected_operator_index];
@@ -139,7 +149,7 @@ class _OperatorFormState extends State<OperatorForm>
                 ),
               ),*/
               SizedBox(
-                height: 20,
+                height: 30,
               ),
               Container(
                 padding:
@@ -149,9 +159,18 @@ class _OperatorFormState extends State<OperatorForm>
               SizedBox(
                 height: 40,
               ),
-              Padding(
+              Container(
+                margin: EdgeInsets.only(right: 20),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildGridViewCards(),
+                child: _phoneInput(),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _amountInput(),
               ),
               SizedBox(
                 height: 20,
@@ -161,6 +180,40 @@ class _OperatorFormState extends State<OperatorForm>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _amountInput() {
+    return TextFormField(
+      controller: _amountController,
+      inputFormatters: [
+        WhitelistingTextInputFormatter.digitsOnly,
+      ],
+      decoration: new InputDecoration(
+        border: InputBorder.none,
+        filled: true,
+        icon: Icon(Icons.dialpad),
+        hintText: 'Votre donation',
+        labelText: 'Montant',
+      ),
+      keyboardType: TextInputType.number,
+    );
+  }
+
+  Widget _phoneInput() {
+    return TextFormField(
+      controller: _phoneController,
+      inputFormatters: [
+        WhitelistingTextInputFormatter.digitsOnly,
+      ],
+      decoration: new InputDecoration(
+        border: InputBorder.none,
+        filled: true,
+        icon: Icon(Icons.phone),
+        hintText: 'Votre Numero de telephone',
+        labelText: 'Telephone',
+      ),
+      keyboardType: TextInputType.number,
     );
   }
 
@@ -337,12 +390,12 @@ class _OperatorFormState extends State<OperatorForm>
       List<dynamic> data) {
     List<DropdownMenuItem<String>> items = new List();
 
-    items.add(new DropdownMenuItem(
+    /* items.add(new DropdownMenuItem(
         value: 'all',
         child: FittedBox(
           fit: BoxFit.contain,
           child: Text("-- Tous --", overflow: TextOverflow.ellipsis),
-        )));
+        )));*/
 
     for (var val in data) {
 //      print('dropdown item $val');
