@@ -42,13 +42,13 @@ class Transaction extends StatelessWidget {
       padding: EdgeInsets.all(9.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
+        /* boxShadow: [
           BoxShadow(
             blurRadius: 5.0,
             color: Colors.grey[350],
             offset: Offset(0, 3),
           ),
-        ],
+        ],*/
       ),
       child: Row(
         children: <Widget>[
