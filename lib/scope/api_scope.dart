@@ -8,6 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 
 class ApiScope extends Model {
+  Map _selected_transaction;
+
+  Map get selected_transaction => _selected_transaction;
+
+  set selected_transaction(Map value) {
+    _selected_transaction = value;
+    notifyListeners();
+  }
+
   //**************************************
   Future<Map> post_noToken(Map data, String url) async {
     try {

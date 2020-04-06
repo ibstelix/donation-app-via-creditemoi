@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/utils/style.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
-import 'main.dart';
-import 'widgets/send_receive_switch.dart';
-import 'widgets/transaction.dart';
-import 'widgets/custom_button.dart';
+import '../main.dart';
+import '../widgets/send_receive_switch.dart';
+import '../widgets/transaction.dart';
+import '../widgets/custom_button.dart';
 
 class Dashboard extends StatefulWidget {
   final MainModel model;
@@ -19,6 +22,33 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  StreamSubscription<LocationData> locationSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.model.initLocation().then((_) {
+//      print('init location listener');
+//      _locationListener();
+    });
+  }
+
+  _locationListener() {
+    locationSubscription = widget.model.location
+        .onLocationChanged()
+        .listen((LocationData currentLocation) {
+      print('new location ${currentLocation.toString()}');
+    });
+  }
+
+  @override
+  void dispose() {
+    if (locationSubscription != null) {
+      locationSubscription.cancel();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -125,12 +155,18 @@ class _DashboardState extends State<Dashboard> {
                       child: ListView(
                         physics: BouncingScrollPhysics(),
                         children: <Widget>[
-                          Transaction(
-                            receptient: "Amazigh Halzoun",
-                            transactionAmout: "5000.00",
-                            transactionDate: "26 Jun 2019",
-                            transactionInfo: "Laptop",
-                            transactionType: TransactionType.sent,
+                          InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, "/transaction-detail");
+                            },
+                            child: Transaction(
+                              receptient: "Amazigh Halzoun",
+                              transactionAmout: "5000.00",
+                              transactionDate: "26 Jun 2019",
+                              transactionInfo: "Laptop",
+                              transactionType: TransactionType.sent,
+                            ),
                           ),
                           Transaction(
                             receptient: "Awesome Client",

@@ -50,4 +50,17 @@ extension HexColor on Color {
       '${blue.toRadixString(16).padLeft(2, '0')}';
 }
 
+bankCardNumberFormat(String cardNumber) {
+  print(cardNumber);
+  if (cardNumber.length == 16) {
+    var part1 = cardNumber.substring(0, 4);
+    print(cardNumber);
+    var part2 = cardNumber.substring(4, 8);
+    var part3 = cardNumber.substring(8, 12);
+    var part4 = cardNumber.substring(12, 16);
+    return "$part1-$part2-$part3-$part4";
+  }
+  return "";
+}
+
 isNumeric(string) => num.tryParse(string) != null;

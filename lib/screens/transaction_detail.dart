@@ -1,33 +1,46 @@
-import 'dart:io';
-
 import 'package:codedecoders/scope/main_model.dart';
-import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/widgets/loading_spinner.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ConfirmationForm extends StatefulWidget {
+class TransactionDetail extends StatefulWidget {
   final MainModel model;
-  final String type;
 
-  const ConfirmationForm({Key key, this.type, this.model}) : super(key: key);
+  const TransactionDetail({Key key, this.model}) : super(key: key);
 
   @override
-  _ConfirmationFormState createState() => _ConfirmationFormState();
+  _TransactionDetailState createState() => _TransactionDetailState();
 }
 
-class _ConfirmationFormState extends State<ConfirmationForm> {
-  String _appBarText = "Confirmation";
+class _TransactionDetailState extends State<TransactionDetail> {
+  Map _selected_transaction;
   bool _loading = false;
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selected_transaction = widget.model.selected_transaction ?? {};
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.close,
+              color: Colors.blue,
+              size: 30,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
         body: Stack(
           children: <Widget>[
             _bodyContent(context),
@@ -40,43 +53,10 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
     );
   }
 
-  Widget _bodyContent(BuildContext context) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          backgroundColor: HexColor.fromHex("#062b66"),
-          expandedHeight: HEADER_HEIGHT,
-          floating: false,
-          pinned: true,
-          flexibleSpace: FlexibleSpaceBar(
-            title: Text(_appBarText),
-            background: Image.asset(FORM_BACKGROUND_ASSET, fit: BoxFit.cover),
-          ),
-        ),
-        SliverList(
-//          itemExtent: 100.0,
-          delegate: SliverChildListDelegate(
-            [
-              SizedBox(
-                height: 50,
-              ),
-              _mainView(),
-              SizedBox(
-                height: 50.0,
-              ),
-              new Container(
-                alignment: Alignment.center,
-                child: _getPayButton(),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(color: Colors.grey.withOpacity(0.3)),
-            ],
-          ),
-        ),
-      ],
-    );
+  _bodyContent(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: _mainView());
   }
 
   Widget _mainView() {
@@ -101,7 +81,7 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
   }
 
   Widget _ReceiverSection() {
-    var receiver = widget.type;
+    var receiver = _selected_transaction['beneficiaire'] ?? 'R';
     return Container(
       padding: EdgeInsets.all(16.0),
       child: Row(
@@ -129,13 +109,13 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: SvgPicture.network(
-                      widget.model.selected_country['Flag'],
-                      width: 20,
+                    child: Icon(
+                      Icons.calendar_today,
+                      size: 18,
                     ),
                   ),
                   Text(
-                    widget.model.selected_country['Name'],
+                    _selected_transaction['date'] ?? '',
                     style: TextStyle(fontSize: 12.0, color: Color(0xFF929091)),
                   ),
                 ],
@@ -187,7 +167,7 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
                     ),
                     Expanded(
                       child: Text(
-                        "${widget.model.amount}",
+                        "${_selected_transaction['amount'] ?? ''}",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30.0,
@@ -239,7 +219,7 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Icon(
-                      widget.type == "Mobile"
+                      _selected_transaction['type'] ?? '' == "Mobile"
                           ? Icons.dialpad
                           : Icons.credit_card,
                       color: Colors.blue,
@@ -248,10 +228,10 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
                         child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        widget.type == "Mobile"
-                            ? widget.model.phone_number
-                            : _bankCardNumberFormat(
-                                widget.model.paymentCard.number),
+                        _selected_transaction['type'] ?? '' == "Mobile"
+                            ? _selected_transaction['phone'] ?? ''
+                            : bankCardNumberFormat(
+                                _selected_transaction['card'] ?? ''),
                         style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.w700,
@@ -266,54 +246,5 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
         ],
       ),
     );
-  }
-
-  _bankCardNumberFormat(String cardNumber) {
-    print(cardNumber);
-    var part1 = cardNumber.substring(0, 4);
-    print(cardNumber);
-    var part2 = cardNumber.substring(4, 8);
-    var part3 = cardNumber.substring(8, 12);
-    var part4 = cardNumber.substring(12, 16);
-    return "$part1-$part2-$part3-$part4";
-  }
-
-  void _validateInputs() {
-    /*final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      _showInSnackBar('Please fix the errors in red before submitting.');
-    } else {
-      form.save();
-      // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment card is valid');
-    }*/
-  }
-
-  Widget _getPayButton() {
-    if (Platform.isIOS) {
-      return new CupertinoButton(
-        onPressed: _validateInputs,
-        color: CupertinoColors.activeBlue,
-        child: const Text(
-          PAY,
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    } else {
-      return new RaisedButton(
-        onPressed: _validateInputs,
-        color: Colors.blue,
-        splashColor: Colors.deepPurple,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(const Radius.circular(100.0)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 80.0),
-        textColor: Colors.white,
-        child: new Text(
-          PAY.toUpperCase(),
-          style: const TextStyle(fontSize: 17.0),
-        ),
-      );
-    }
   }
 }

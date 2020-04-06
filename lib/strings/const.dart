@@ -16,3 +16,5 @@ const String default_anon_user = "creditemoi";
 const String baseurl = 'https://restv2.almfinance.com/api/v2/';
 
 const double HEADER_HEIGHT = 200.0;
+const NO_LOCATION_SERVICE =
+    "La localisation n'est pas pris en compte\nVeuillez l'activer";

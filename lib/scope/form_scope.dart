@@ -1,4 +1,10 @@
+import 'package:codedecoders/strings/const.dart';
+import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/widgets/payment_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:location/location.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class FormScope extends Model {
@@ -22,6 +28,65 @@ class FormScope extends Model {
 
   double _amount;
   String _phone_number;
+
+  PublishSubject<dynamic> _locationSubject = PublishSubject();
+  Location _location = new Location();
+  LocationData _currentLocation;
+
+  Future<LocationData> getUserLocation() async {
+//    _location.hasPermission();
+    var currentLocation;
+    try {
+      currentLocation = await _location.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        showFormValidationToast(
+            'Impossible de recuperer la localisation', Colors.red);
+      }
+      currentLocation = null;
+    }
+    _currentLocation = currentLocation;
+    notifyListeners();
+    return _currentLocation;
+  }
+
+  Future<bool> checkLocationPermission() async {
+    var gps = await _location.serviceEnabled();
+    if (gps) {
+      return true;
+    } else {
+      var reqGPS = await _location.requestService();
+      if (reqGPS) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<LocationData> initLocation() async {
+    var checkPermission = await checkLocationPermission();
+
+    if (!checkPermission) {
+      showFormValidationToast(NO_LOCATION_SERVICE);
+      return null;
+    }
+
+    var permCheck = await _location.requestPermission();
+    print('check curentLocation is $_currentLocation / $permCheck');
+
+    if (permCheck != null) {
+      var locationStatus = await getUserLocation();
+      print('location status is $locationStatus');
+      if (locationStatus == null) {
+        showFormValidationToast(NO_LOCATION_SERVICE);
+        notifyListeners();
+        return null;
+      }
+      _currentLocation = locationStatus;
+    }
+    notifyListeners();
+    return _currentLocation;
+  }
 
   /**
    * GETTER AND SETTER
@@ -115,6 +180,27 @@ class FormScope extends Model {
 
   set phone_number(String value) {
     _phone_number = value;
+    notifyListeners();
+  }
+
+  Location get location => _location;
+
+  set location(Location value) {
+    _location = value;
+    notifyListeners();
+  }
+
+  LocationData get currentLocation => _currentLocation;
+
+  set currentLocation(LocationData value) {
+    _currentLocation = value;
+    notifyListeners();
+  }
+
+  PublishSubject<dynamic> get locationSubject => _locationSubject;
+
+  set locationSubject(PublishSubject<dynamic> value) {
+    _locationSubject = value;
     notifyListeners();
   }
 }

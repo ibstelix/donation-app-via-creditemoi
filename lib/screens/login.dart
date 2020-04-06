@@ -1,4 +1,4 @@
-import 'package:codedecoders/homePage.dart';
+import 'package:codedecoders/screens/homePage.dart';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/utils/style.dart';
 import 'package:flutter/material.dart';

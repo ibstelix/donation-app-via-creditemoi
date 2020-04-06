@@ -1,7 +1,7 @@
 import 'package:codedecoders/utils/general.dart';
 import 'package:flutter/material.dart';
 
-import 'banks_selector.dart';
+import '../forms/banks_selector.dart';
 
 class SendScreen extends StatelessWidget {
   @override
