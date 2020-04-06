@@ -60,7 +60,7 @@ class Transaction extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15.0),
                   child: Image.asset(
                     "assets/donate_coin.png",
-                    width: 50,
+                    width: 30,
                   ),
                 ),
                 Positioned(
