@@ -341,7 +341,6 @@ class _OperatorFormState extends State<OperatorForm>
           showSnackBar(context, "Aucun operateur trouvé",
               status: false, duration: 5);
         } else {
-          widget.model.aServiceProviders = data;
           _processServicePRovidersData(data);
         }
       }
@@ -373,6 +372,8 @@ class _OperatorFormState extends State<OperatorForm>
       _selectedServiceProviders = _listServiceProviders
           .where((i) => i['country'] == mapCountryCode)
           .toList();
+      widget.model.aServiceProviders = _selectedServiceProviders;
+
       setState(() {
         print('selected providers $_selectedServiceProviders');
         _operatorsdropDownMenuItems =
