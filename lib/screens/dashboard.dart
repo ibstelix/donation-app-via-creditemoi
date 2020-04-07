@@ -41,7 +41,6 @@ class _DashboardState extends State<Dashboard>
   @override
   void afterFirstLayout(BuildContext context) {
     _anonymeAuthenticate(context);
-    _getTransactions();
   }
 
   void _anonymeAuthenticate(BuildContext context) async {
@@ -49,15 +48,14 @@ class _DashboardState extends State<Dashboard>
     print('checking connected....$connected');
 
     if (connected) {
-//      _processData();
+      _getTransactions();
     } else {
       _reconnectAnonymous();
     }
   }
 
   _locationListener() {
-    locationSubscription = widget.model.location
-        .onLocationChanged()
+    locationSubscription = widget.model.location.onLocationChanged
         .listen((LocationData currentLocation) {
       print('new location ${currentLocation.toString()}');
     });
@@ -309,8 +307,7 @@ class _DashboardState extends State<Dashboard>
       checkErrorMessge(user_res);
       if (user_res['status']) {
         widget.model.anonymous_user = user_res['msg'];
-        //success
-//        _processData();
+        _getTransactions();
       }
     }
   }

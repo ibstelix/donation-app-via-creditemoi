@@ -55,10 +55,14 @@ class FormScope extends Model {
 
   Future<bool> checkLocationPermission() async {
     var gps = await _location.serviceEnabled();
+    print('gps status is $gps');
     if (gps) {
       return true;
     } else {
       var reqGPS = await _location.requestService();
+      gps = await _location.serviceEnabled();
+      print('new gps status is $gps');
+      print("reqGPS Status is $reqGPS");
       if (reqGPS) {
         return true;
       }
@@ -143,6 +147,7 @@ class FormScope extends Model {
       };
     }
   }
+
   /**
    * GETTER AND SETTER
    */

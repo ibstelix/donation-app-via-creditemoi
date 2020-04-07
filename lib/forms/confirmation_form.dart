@@ -51,8 +51,7 @@ class _ConfirmationFormState extends State<ConfirmationForm>
   }
 
   _locationListener() {
-    locationSubscription = widget.model.location
-        .onLocationChanged()
+    locationSubscription = widget.model.location.onLocationChanged
         .listen((LocationData currentLocation) {
       _currentLocation = currentLocation;
 //      print('new location ${currentLocation.toString()}');
@@ -314,9 +313,10 @@ class _ConfirmationFormState extends State<ConfirmationForm>
       return;
     }
 
+    print('current location i s $_currentLocation');
     if (_currentLocation == null) {
       showFormValidationToast(
-          'La localisation n\'est pas pris en compte\nVeuillez recommencer');
+          'La localisation n\'est pas pris en compte\nVeuillez patienter');
       _initLocation();
       return;
     } else {
