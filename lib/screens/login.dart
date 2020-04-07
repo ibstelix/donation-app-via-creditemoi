@@ -89,6 +89,7 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: Color(0xff501396), width: 1)),
       onPressed: () {
+        Navigator.pushNamed(context, "/message");
         /* Navigator.push(
             context, MaterialPageRoute(builder: (context) => HomePage()));*/
       },

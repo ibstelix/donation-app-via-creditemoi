@@ -1,4 +1,5 @@
 import 'package:alice/alice.dart';
+import 'package:codedecoders/forms/message_form.dart';
 import 'package:codedecoders/screens/all_transactions.dart';
 import 'package:codedecoders/screens/dashboard.dart';
 import 'package:codedecoders/scope/main_model.dart';
@@ -64,6 +65,9 @@ class MyApp extends StatelessWidget {
                 model: _model,
               ),
           '/all-transactions': (BuildContext context) => AllTransactions(
+                model: _model,
+              ),
+          '/message': (BuildContext context) => MessageForm(
                 model: _model,
               ),
           '/help': (BuildContext context) => HelpPage(),
