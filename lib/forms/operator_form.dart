@@ -96,8 +96,9 @@ class _OperatorFormState extends State<OperatorForm>
                   duration: 5);
               return;
             }
-            widget.model.amount = double.tryParse(_amountController.text);
+            widget.model.amount = int.tryParse(_amountController.text);
             widget.model.phone_number = _phoneController.text;
+            widget.model.selectedOperator = _selectedOperator;
 
             Navigator.pushNamed(context, "/confirmation-form/Mobile");
 
@@ -286,6 +287,10 @@ class _OperatorFormState extends State<OperatorForm>
     var connected = widget.model.aconnected;
     print('checking connected....$connected');
 
+    setState(() {
+      _loading = true;
+    });
+
     if (connected) {
       _processData();
     } else {
@@ -294,9 +299,6 @@ class _OperatorFormState extends State<OperatorForm>
   }
 
   void _reconnectAnonymous() async {
-    setState(() {
-      _loading = true;
-    });
     Map<String, dynamic> sendData = {
       'pseudo': default_anon_user,
       'password': 'rdcdev!!?',

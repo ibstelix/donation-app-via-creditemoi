@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
@@ -7,6 +10,7 @@ import 'package:codedecoders/widgets/loading_spinner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:location/location.dart';
 
 class ConfirmationForm extends StatefulWidget {
   final MainModel model;
@@ -18,10 +22,42 @@ class ConfirmationForm extends StatefulWidget {
   _ConfirmationFormState createState() => _ConfirmationFormState();
 }
 
-class _ConfirmationFormState extends State<ConfirmationForm> {
+class _ConfirmationFormState extends State<ConfirmationForm>
+    with AfterLayoutMixin<ConfirmationForm> {
   String _appBarText = "Confirmation";
   bool _loading = false;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  StreamSubscription<LocationData> locationSubscription;
+  LocationData _currentLocation;
+  Map _deviceData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocation();
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _getUSerIDData();
+  }
+
+  _initLocation() {
+    widget.model.initLocation().then((_) {
+      _currentLocation = widget.model.currentLocation;
+      print('init location listener whith ${_currentLocation.toString()}');
+      _locationListener();
+    });
+  }
+
+  _locationListener() {
+    locationSubscription = widget.model.location
+        .onLocationChanged()
+        .listen((LocationData currentLocation) {
+      _currentLocation = currentLocation;
+//      print('new location ${currentLocation.toString()}');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,14 +305,123 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
   }
 
   void _validateInputs() {
-    /*final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      _showInSnackBar('Please fix the errors in red before submitting.');
+    FocusScope.of(context).requestFocus(new FocusNode());
+
+    if (widget.type == "Bank") {
+      showSnackBar(
+          context, "Le paiement par banque n'est pas encore disponible",
+          status: false);
+      return;
+    }
+
+    if (_currentLocation == null) {
+      showFormValidationToast(
+          'La localisation n\'est pas pris en compte\nVeuillez recommencer');
+      _initLocation();
+      return;
     } else {
-      form.save();
-      // Encrypt and send send payment details to payment gateway
-      _showInSnackBar('Payment card is valid');
-    }*/
+      _facturatioProcess();
+    }
+  }
+
+  _facturatioProcess() async {
+    setState(() {
+      _loading = true;
+    });
+
+    var selectedOperator = widget.model.selectedOperator ?? {};
+//    print("operator ${widget.model.selectedOperator}");
+
+    var api_key = API_Key;
+
+    Map<String, dynamic> sendData = {
+      'api_key': api_key,
+      'service_items_id': selectedOperator['id'].toString() ?? '0',
+      'phone_number': widget.model.phone_number.toString(),
+      'amount': widget.model.amount.toString(),
+      "custom_data": json.encode({
+        "external_id": _deviceData['userID'],
+        'location': {
+          'lat': _currentLocation.latitude,
+          'long': _currentLocation.longitude
+        },
+        "device_id": _deviceData['deviceID'],
+        "ext_transaction_ID": _deviceData['ext_transaction_ID']
+      })
+    };
+
+    print('data to send : ${sendData}');
+    var url = '${baseurl}credit/send';
+
+    var status = await widget.model.post_api(sendData, url, true);
+    print('status ::  ${status}');
+
+    if (status != null) {
+      setState(() {
+        _loading = false;
+      });
+      bool st = status['status'] ?? false;
+
+      if (!st) {
+        _handleErrorRequest(status);
+      } else {
+        showSnackBar(context, "Facturation reussie", status: true, duration: 5);
+        _livraisonProcess();
+      }
+    }
+  }
+
+  _livraisonProcess() async {
+    setState(() {
+      _loading = true;
+    });
+    var selectedOperator = widget.model.selectedOperator ?? {};
+
+    var api_key = API_Key;
+    Map<String, dynamic> sendData = {
+      'api_key': api_key,
+      'service_items_id': selectedOperator['id'].toString() ?? '0',
+      'phone_number': DONATION_PHONE,
+      'amount': widget.model.amount.toString(),
+      "custom_data": json.encode({
+        "external_id": _deviceData['userID'],
+        'location': {
+          'lat': _currentLocation.latitude,
+          'long': _currentLocation.longitude
+        },
+        "device_id": _deviceData['deviceID'],
+        "ext_transaction_ID": _deviceData['ext_transaction_ID']
+      })
+    };
+
+    var url = '${baseurl}credit/send';
+
+    var status = await widget.model.post_api(sendData, url, true);
+    print('status ::  ${status}');
+
+    if (status != null) {
+      setState(() {
+        _loading = false;
+      });
+      bool st = status['status'] ?? false;
+
+      if (!st) {
+        _handleErrorRequest(status);
+      } else {
+        showFormValidationToast("Livraison reussie", Colors.green);
+        Navigator.of(context).pushReplacementNamed("/home");
+      }
+    }
+  }
+
+  _getUSerIDData() async {
+    print('get device info...');
+    var checkOS =
+        Theme.of(context).platform == TargetPlatform.iOS ? 'iOS' : 'Android';
+
+    var userData = await widget.model.getDeviceUserID(checkOS);
+    _deviceData = userData;
+    print("userdata found is $userData");
   }
 
   Widget _getPayButton() {
@@ -305,5 +450,14 @@ class _ConfirmationFormState extends State<ConfirmationForm> {
         ),
       );
     }
+  }
+
+  void _handleErrorRequest(Map status) {
+    print('error status is $status');
+    var msg = status.containsKey('msg')
+        ? (status['msg'] != null ? status['msg'] : 'Erreur Http Inattendue')
+        : "Une erreur inattendue s'est produit";
+    status['msg'] = msg;
+    showSnackBar(context, msg, status: false, duration: 5);
   }
 }

@@ -61,7 +61,7 @@ class _AmountFormState extends State<AmountForm> {
                   duration: 5);
               return;
             }
-            widget.model.amount = double.tryParse(_amountController.text);
+            widget.model.amount = int.tryParse(_amountController.text);
 
             Navigator.pushNamed(context, "/confirmation-form/Bank");
 

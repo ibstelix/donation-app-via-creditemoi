@@ -45,13 +45,16 @@ class ApiScope extends Model {
 
       http.Response response =
           await http.post(url, body: data, headers: getHeaders(token));
-//      alice.onHttpResponse(response);
+      alice.onHttpResponse(response);
 
       final Map<String, dynamic> res = json.decode(response.body);
-//      print("resultat map is $res");
+      print("resultat map is $res");
 
       if (response.statusCode != 200) {
-        return raisedException(res['msg'], url);
+        var msg = res['msg'] != null
+            ? res['msg']
+            : "${res['message']} ${res['description'] ?? ''}";
+        return raisedException(msg, url);
       }
       return {"status": true, "msg": res};
     } catch (err) {
@@ -85,11 +88,16 @@ class ApiScope extends Model {
       print("resultat map is $resultat");
 
       if (response.statusCode != 200) {
-        return raisedException(
+        var msg = resultat['msg'] != null
+            ? resultat['msg']
+            : "${resultat['message']} ${resultat['description'] ?? ''}";
+        return raisedException(msg, url);
+
+        /* return raisedException(
             resultat.runtimeType != Map
                 ? "Erreur reponse Http"
                 : resultat['msg'],
-            url);
+            url);*/
       }
 
       return {"status": true, "msg": resultat};

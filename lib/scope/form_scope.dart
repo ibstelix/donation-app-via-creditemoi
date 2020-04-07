@@ -1,11 +1,14 @@
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/widgets/payment_card.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class FormScope extends Model {
   String _selected_country_code;
@@ -26,7 +29,7 @@ class FormScope extends Model {
 
   Map _selectedItem;
 
-  double _amount;
+  int _amount;
   String _phone_number;
 
   PublishSubject<dynamic> _locationSubject = PublishSubject();
@@ -88,6 +91,58 @@ class FormScope extends Model {
     return _currentLocation;
   }
 
+  Future<AndroidDeviceInfo> getIdDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+    return androidDeviceInfo;
+  }
+
+  Future<IosDeviceInfo> getAppleIdDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+    return iosDeviceInfo;
+  }
+
+  getDeviceUserID(String OS) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userID = prefs.getString('userID');
+    String deviceID = prefs.getString('devide_id');
+    String ext_transaction_ID = '';
+//    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    var uuid = Uuid();
+    if (userID == null || deviceID == null || ext_transaction_ID == null) {
+      if (OS == 'iOS') {
+        var apple = await getAppleIdDeviceInfo(); //identifierForVendor
+        deviceID = apple.identifierForVendor;
+
+        print('apple ID ${deviceID}');
+      } else {
+        var android = await getIdDeviceInfo(); //androidId
+        deviceID = android.androidId;
+        print('Android ID ${deviceID}');
+      }
+      userID = uuid.v5(Uuid.NAMESPACE_URL, deviceID);
+      ext_transaction_ID = uuid.v1();
+      print('userID is $userID');
+
+      prefs.setString('devide_id', deviceID);
+      prefs.setString('userID', userID);
+
+      return {
+        'userID': userID,
+        'deviceID': deviceID,
+        'ext_transaction_ID': ext_transaction_ID
+      };
+    } else {
+      ext_transaction_ID = uuid.v1();
+      return {
+        'userID': userID,
+        'deviceID': deviceID,
+        'ext_transaction_ID': ext_transaction_ID
+      };
+    }
+  }
   /**
    * GETTER AND SETTER
    */
@@ -99,9 +154,9 @@ class FormScope extends Model {
     notifyListeners();
   }
 
-  double get amount => _amount;
+  int get amount => _amount;
 
-  set amount(double value) {
+  set amount(int value) {
     _amount = value;
     notifyListeners();
   }

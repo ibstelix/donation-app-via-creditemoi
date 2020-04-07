@@ -54,7 +54,7 @@ class SendReceiveSwitch extends StatelessWidget {
                 );
                 return;
               }).then((_) {
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/");
               });
             },
           ),

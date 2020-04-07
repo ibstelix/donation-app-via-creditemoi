@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
@@ -23,7 +24,8 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard>
+    with AfterLayoutMixin<Dashboard> {
   StreamSubscription<LocationData> locationSubscription;
   bool _loading = false;
 
@@ -39,6 +41,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void afterFirstLayout(BuildContext context) {
     _anonymeAuthenticate(context);
+    _getTransactions();
   }
 
   void _anonymeAuthenticate(BuildContext context) async {
@@ -60,6 +63,22 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  _getTransactions() async {
+    setState(() {
+      _loading = true;
+    });
+    var url = '${baseurl}auth/api_keys/${API_Key}/transaction/1';
+    var res = await widget.model.get_api(url, true);
+    print('trans res $res');
+    checkErrorMessge(res);
+
+    if (res['status']) {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     if (locationSubscription != null) {
@@ -70,148 +89,104 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.all(21),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            colors: DASHBOARD_GRADIENT,
-                          ),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "Cher Donateur,",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                    ),
-                                    /*Text(
-                                      "What would you do like to do today ?",
-                                      style: TextStyle(color: Colors.white),
-                                    ),*/
-                                  ],
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black45,
-                                        blurRadius: 5.0,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
-                                    shape: BoxShape.circle,
-                                    color: Colors.transparent,
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                      USER_PROFILE_ASSET,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            SendReceiveSwitch(),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 15, horizontal: 45),
-                        color: Color(0xfff4f5f9),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Flexible(
-                              child:
-                                  CustomButton(buttonType: ButtonType.donate),
-                            ),
-                            Flexible(
-                              child: InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, "/all-transactions");
-                                  },
-                                  child: CustomButton(
-                                      buttonType: ButtonType.history)),
-                            ),
-                            Flexible(
-                              child: InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, "/help");
-                                  },
-                                  child: CustomButton(
-                                      buttonType: ButtonType.help)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(21.0),
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pushReplacementNamed(context, "/");
+        return;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        Text(
-                          "TRANSACTIONS RECENTES",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 17.0,
+                        Container(
+                          padding: EdgeInsets.all(21),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              colors: DASHBOARD_GRADIENT,
+                            ),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "Cher Donateur,",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                      ),
+                                      /*Text(
+                                        "What would you do like to do today ?",
+                                        style: TextStyle(color: Colors.white),
+                                      ),*/
+                                    ],
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black45,
+                                          blurRadius: 5.0,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                      shape: BoxShape.circle,
+                                      color: Colors.transparent,
+                                    ),
+                                    child: CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                        USER_PROFILE_ASSET,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 25.0,
+                              ),
+                              SendReceiveSwitch(),
+                            ],
                           ),
                         ),
-                        Expanded(
-                          child: ListView(
-                            physics: BouncingScrollPhysics(),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 45),
+                          color: Color(0xfff4f5f9),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, "/transaction-detail");
-                                },
-                                child: Transaction(
-                                  receptient: "Amazigh Halzoun",
-                                  transactionAmout: "5000.00",
-                                  transactionDate: "26 Jun 2019",
-                                  transactionInfo: "Laptop",
-                                  transactionType: TransactionType.sent,
-                                ),
+                              Flexible(
+                                child:
+                                    CustomButton(buttonType: ButtonType.donate),
                               ),
-                              Transaction(
-                                receptient: "Awesome Client",
-                                transactionAmout: "15000.00",
-                                transactionDate: "26 Jun 2019",
-                                transactionInfo: "Mobile App",
-                                transactionType: TransactionType.pending,
+                              Flexible(
+                                child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, "/all-transactions");
+                                    },
+                                    child: CustomButton(
+                                        buttonType: ButtonType.history)),
                               ),
-                              Transaction(
-                                receptient: "Lazy Client",
-                                transactionAmout: "25000.00",
-                                transactionDate: "24 Jun 2019",
-                                transactionInfo: "Mobile App",
-                                transactionType: TransactionType.sent,
+                              Flexible(
+                                child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, "/help");
+                                    },
+                                    child: CustomButton(
+                                        buttonType: ButtonType.help)),
                               ),
                             ],
                           ),
@@ -219,15 +194,67 @@ class _DashboardState extends State<Dashboard> {
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
-            LoadingSpinner(
-              loading: _loading,
-            )
-          ],
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(21.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Text(
+                            "TRANSACTIONS RECENTES",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView(
+                              physics: BouncingScrollPhysics(),
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, "/transaction-detail");
+                                  },
+                                  child: Transaction(
+                                    receptient: "Amazigh Halzoun",
+                                    transactionAmout: "5000.00",
+                                    transactionDate: "26 Jun 2019",
+                                    transactionInfo: "Laptop",
+                                    transactionType: TransactionType.sent,
+                                  ),
+                                ),
+                                Transaction(
+                                  receptient: "Awesome Client",
+                                  transactionAmout: "15000.00",
+                                  transactionDate: "26 Jun 2019",
+                                  transactionInfo: "Mobile App",
+                                  transactionType: TransactionType.pending,
+                                ),
+                                Transaction(
+                                  receptient: "Lazy Client",
+                                  transactionAmout: "25000.00",
+                                  transactionDate: "24 Jun 2019",
+                                  transactionInfo: "Mobile App",
+                                  transactionType: TransactionType.sent,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              LoadingSpinner(
+                loading: _loading,
+              )
+            ],
+          ),
+          /* bottomNavigationBar: buildBottomNavigationBar(context),*/
         ),
-        /* bottomNavigationBar: buildBottomNavigationBar(context),*/
       ),
     );
   }
@@ -296,7 +323,9 @@ class _DashboardState extends State<Dashboard> {
       var msg = res.containsKey('msg')
           ? res['msg']
           : "Une Erreur s'est produite. Veuillez contacter l'Admin";
-//      Navigator.of(_scaffoldKey.currentContext).pop(msg);
+      showSnackBar(context, msg, status: false, duration: 5);
+
+      //      Navigator.of(_scaffoldKey.currentContext).pop(msg);
     }
   }
 }
