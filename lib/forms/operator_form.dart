@@ -63,7 +63,7 @@ class _OperatorFormState extends State<OperatorForm>
         key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            _bodyContent(context),
+            Form(key: _formKey, child: _bodyContent(context)),
             LoadingSpinner(
               loading: _loading,
             )
@@ -191,6 +191,12 @@ class _OperatorFormState extends State<OperatorForm>
   Widget _amountInput() {
     return TextFormField(
       controller: _amountController,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Champ obligatoire';
+        }
+        return null;
+      },
       inputFormatters: [
         WhitelistingTextInputFormatter.digitsOnly,
       ],

@@ -28,7 +28,7 @@ class _CountrySelectorState extends State<CountrySelector> {
   Map _selected_country;
 
   List<DropdownMenuItem<String>> _countrydropDownMenuItems;
-  String _currentCountry;
+  String _currentCountryCode;
 
   List<DropdownMenuItem<String>> _operatorTypedropDownMenuItems;
   String _currentOperatorType;
@@ -57,8 +57,7 @@ class _CountrySelectorState extends State<CountrySelector> {
       setState(() {
         _countrydropDownMenuItems =
             _getCountryDropDownMenuItems(countries_data);
-        _currentCountry =
-            _default_ip_data == null ? "" : _default_ip_data['cc'];
+        _initSelectedCountry();
         _loading = false;
       });
       return;
@@ -78,9 +77,29 @@ class _CountrySelectorState extends State<CountrySelector> {
     _MapCountries = countries_data;
     setState(() {
       _countrydropDownMenuItems = _getCountryDropDownMenuItems(countries_data);
-      _currentCountry = _default_ip_data == null ? "" : _default_ip_data['cc'];
+
+      _initSelectedCountry();
+
       _loading = false;
     });
+  }
+
+  _initSelectedCountry() {
+    if (_default_ip_data != null) {
+      _currentCountryCode = _default_ip_data['cc'];
+
+      var mapCountry = _MapCountries.firstWhere(
+          (i) => i['Alpha2Code'].toUpperCase() == _currentCountryCode,
+          orElse: () => null);
+
+      print("curr $_currentCountryCode and $mapCountry");
+
+      if (mapCountry != null) {
+        _selected_country = mapCountry;
+      }
+    } else {
+      _currentCountryCode = "";
+    }
   }
 
   Future<dynamic> _getUserIpInfo() async {
@@ -142,7 +161,7 @@ class _CountrySelectorState extends State<CountrySelector> {
             size: 30,
           ),
           onPressed: () {
-            if (_currentCountry == null) {
+            if (_currentCountryCode == null) {
               showSnackBar(
                   context, "Veuillez d'abord choisir votre pays de residence");
               return;
@@ -155,7 +174,9 @@ class _CountrySelectorState extends State<CountrySelector> {
               return;
             }
 
-            widget.model.selected_country_code = _currentCountry;
+            print('selected country $_selected_country');
+
+            widget.model.selected_country_code = _currentCountryCode;
             widget.model.selected_country = _selected_country;
             var selected_op_type = _operatorsTypes[_selected_operator_index];
             widget.model.selected_operator_type = selected_op_type;
@@ -285,7 +306,7 @@ class _CountrySelectorState extends State<CountrySelector> {
                     isExpanded: true,
 //                              style: Theme.of(context).textTheme.title,
                     hint: new Text("Chosir Pays"),
-                    value: _currentCountry,
+                    value: _currentCountryCode,
                     items: _countrydropDownMenuItems,
                     onChanged: _countryChangedDropDownItem,
                   ),
@@ -335,7 +356,7 @@ class _CountrySelectorState extends State<CountrySelector> {
     if (mapCountry != null) {
       _selected_country = mapCountry;
       setState(() {
-        _currentCountry = selected;
+        _currentCountryCode = selected;
       });
     }
   }

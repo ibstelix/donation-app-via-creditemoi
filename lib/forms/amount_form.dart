@@ -149,6 +149,13 @@ class _AmountFormState extends State<AmountForm> {
               ),
               new TextFormField(
                 controller: _amountController,
+                validator: (String value) {
+                  if (value.isEmpty) {
+                    return 'Champ obligatoire';
+                  }
+
+                  return null;
+                },
                 inputFormatters: [
                   WhitelistingTextInputFormatter.digitsOnly,
                 ],

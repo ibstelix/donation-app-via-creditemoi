@@ -35,6 +35,7 @@ class _ConfirmationFormState extends State<ConfirmationForm>
   void initState() {
     super.initState();
     _initLocation();
+    print("selected ${widget.model.selected_country}");
   }
 
   @override
