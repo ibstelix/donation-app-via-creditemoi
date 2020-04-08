@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:codedecoders/scope/main_model.dart';
 import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
@@ -13,12 +14,34 @@ class MessageForm extends StatefulWidget {
   _MessageFormState createState() => _MessageFormState();
 }
 
-class _MessageFormState extends State<MessageForm> {
+class _MessageFormState extends State<MessageForm>
+    with AfterLayoutMixin<MessageForm> {
   bool _loading = false;
+  String _loadingText = "Initialisation";
 
   var _formKey = new GlobalKey<FormState>();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _messageController = new TextEditingController();
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _anonymeAuthenticate(context);
+  }
+
+  void _anonymeAuthenticate(BuildContext context) async {
+    var connected = widget.model.aconnected;
+    print('checking connected....$connected');
+
+    if (!connected) {
+      setState(() {
+        _loading = true;
+      });
+
+      var authentification = await widget.model.anonymousAuth();
+      print('auth res $authentification');
+      _handleErrorRequest(authentification);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +78,10 @@ class _MessageFormState extends State<MessageForm> {
                   return;
                 }
 
+                setState(() {
+                  _loadingText = "Envoie en cours";
+                });
+
                 _sendMessage();
               },
             ),
@@ -66,6 +93,7 @@ class _MessageFormState extends State<MessageForm> {
             _bodyContent(context),
             LoadingSpinner(
               loading: _loading,
+              text: _loadingText,
             )
           ],
         ),
@@ -170,12 +198,15 @@ class _MessageFormState extends State<MessageForm> {
     }
   }
 
-  void _handleErrorRequest(Map status) {
-    print('error status is $status');
-    var msg = status.containsKey('msg')
-        ? (status['msg'] != null ? status['msg'] : 'Erreur Http Inattendue')
-        : "Une erreur inattendue s'est produit";
-    status['msg'] = msg;
-    showSnackBar(context, msg, status: false, duration: 8);
+  void _handleErrorRequest(Map res) {
+    setState(() {
+      _loading = false;
+    });
+    if (!res['status']) {
+      var msg = res.containsKey('msg')
+          ? (res['msg'] != null ? res['msg'] : 'Erreur Http Inattendue')
+          : "Une erreur inattendue s'est produit";
+      showSnackBar(context, msg, status: false, duration: 6);
+    }
   }
 }

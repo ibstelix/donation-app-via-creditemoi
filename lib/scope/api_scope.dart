@@ -9,6 +9,22 @@ import '../main.dart';
 
 class ApiScope extends Model {
   Map _selected_transaction;
+  bool _aconnected = false;
+  Map _anonymous_user;
+
+  Map get anonymous_user => _anonymous_user;
+
+  set anonymous_user(Map value) {
+    _anonymous_user = value;
+    notifyListeners();
+  }
+
+  bool get aconnected => _aconnected;
+
+  set aconnected(bool value) {
+    _aconnected = value;
+    notifyListeners();
+  }
 
   Map get selected_transaction => _selected_transaction;
 
@@ -135,5 +151,38 @@ class ApiScope extends Model {
     print('raised exception URL : $url');
     notifyListeners();
     return {"status": false, "msg": msg};
+  }
+
+  Future<dynamic> anonymousAuth() async {
+    Map<String, dynamic> sendData = {
+      'pseudo': default_anon_user,
+      'password': 'rdcdev!!?',
+    };
+    String url = '${baseurl}public/auth';
+    var auth_res = await post_api(sendData, url);
+    print('auth_res is $auth_res');
+    if (!auth_res['status']) {
+      return auth_res;
+    }
+
+    if (auth_res['status']) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _aconnected = true;
+      prefs.setBool(CONNECTED_KEY, true);
+      prefs.setString(TOKEN, auth_res['msg']['token']);
+
+      var user_url = '${baseurl}auth/me';
+      var user_res = await get_api(user_url, true);
+      print('user_res is $user_res');
+
+      if (!user_res['status']) {
+        return user_res;
+      }
+      if (user_res['status']) {
+        anonymous_user = user_res['msg'];
+      }
+
+      return user_res;
+    }
   }
 }

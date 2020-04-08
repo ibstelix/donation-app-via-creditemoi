@@ -315,33 +315,11 @@ class _OperatorFormState extends State<OperatorForm>
     if (connected) {
       _processData();
     } else {
-      _reconnectAnonymous();
-    }
-  }
+      var authentification = await widget.model.anonymousAuth();
 
-  void _reconnectAnonymous() async {
-    Map<String, dynamic> sendData = {
-      'pseudo': default_anon_user,
-      'password': 'rdcdev!!?',
-    };
-    String url = '${baseurl}public/auth';
-    var auth_res = await widget.model.post_api(sendData, url);
-    print('auth_res is $auth_res');
-    checkErrorMessge(auth_res);
+      checkErrorMessge(authentification);
 
-    if (auth_res['status']) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      widget.model.aconnected = true;
-      prefs.setBool(CONNECTED_KEY, true);
-      prefs.setString(TOKEN, auth_res['msg']['token']);
-
-      var user_url = '${baseurl}auth/me';
-      var user_res = await widget.model.get_api(user_url, true);
-      print('user_res is $user_res');
-      checkErrorMessge(user_res);
-      if (user_res['status']) {
-        widget.model.anonymous_user = user_res['msg'];
-        //success
+      if (authentification['status']) {
         _processData();
       }
     }
@@ -492,6 +470,8 @@ class _OperatorFormState extends State<OperatorForm>
       var msg = res.containsKey('msg')
           ? res['msg']
           : "Une Erreur s'est produite. Veuillez contacter l'Admin";
+      showSnackBar(context, msg, status: false, duration: 6);
+
 //      Navigator.of(_scaffoldKey.currentContext).pop(msg);
     }
   }

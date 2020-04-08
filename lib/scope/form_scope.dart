@@ -21,8 +21,6 @@ class FormScope extends Model {
 
   PaymentCard _card;
 
-  bool _aconnected = false;
-  Map _anonymous_user;
   List _aServiceProviders = [];
 
   Map _selectedOperator;
@@ -177,20 +175,6 @@ class FormScope extends Model {
 
   set aServiceProviders(List value) {
     _aServiceProviders = value;
-    notifyListeners();
-  }
-
-  Map get anonymous_user => _anonymous_user;
-
-  set anonymous_user(Map value) {
-    _anonymous_user = value;
-    notifyListeners();
-  }
-
-  bool get aconnected => _aconnected;
-
-  set aconnected(bool value) {
-    _aconnected = value;
     notifyListeners();
   }
 

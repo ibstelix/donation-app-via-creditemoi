@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class LoadingSpinner extends StatelessWidget {
   final bool loading;
+  final String text;
 
-  LoadingSpinner({Key key, this.loading}) : super(key: key);
+  LoadingSpinner({Key key, this.loading, this.text = 'Chargement'})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class LoadingSpinner extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
               ),
               SizedBox(height: 10),
-              Text("chargement")
+              Text(text)
             ],
           ),
         ),

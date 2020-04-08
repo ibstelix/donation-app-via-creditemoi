@@ -44,13 +44,22 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _anonymeAuthenticate(BuildContext context) async {
+    setState(() {
+      _loading = true;
+    });
+
     var connected = widget.model.aconnected;
     print('checking connected....$connected');
 
-    if (connected) {
-      _getTransactions();
+    if (!connected) {
+      var authentification = await widget.model.anonymousAuth();
+      print('auth res $authentification');
+      checkErrorMessge(authentification);
+      if (authentification['status']) {
+        _getTransactions();
+      }
     } else {
-      _reconnectAnonymous();
+      _getTransactions();
     }
   }
 
@@ -280,36 +289,6 @@ class _DashboardState extends State<Dashboard>
         ),
       ],
     );
-  }
-
-  void _reconnectAnonymous() async {
-    setState(() {
-      _loading = true;
-    });
-    Map<String, dynamic> sendData = {
-      'pseudo': default_anon_user,
-      'password': 'rdcdev!!?',
-    };
-    String url = '${baseurl}public/auth';
-    var auth_res = await widget.model.post_api(sendData, url);
-    print('auth_res is $auth_res');
-    checkErrorMessge(auth_res);
-
-    if (auth_res['status']) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      widget.model.aconnected = true;
-      prefs.setBool(CONNECTED_KEY, true);
-      prefs.setString(TOKEN, auth_res['msg']['token']);
-
-      var user_url = '${baseurl}auth/me';
-      var user_res = await widget.model.get_api(user_url, true);
-      print('user_res is $user_res');
-      checkErrorMessge(user_res);
-      if (user_res['status']) {
-        widget.model.anonymous_user = user_res['msg'];
-        _getTransactions();
-      }
-    }
   }
 
   checkErrorMessge(res) {
