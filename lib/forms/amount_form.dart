@@ -56,6 +56,11 @@ class _AmountFormState extends State<AmountForm> {
             size: 30,
           ),
           onPressed: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            if (!_formKey.currentState.validate()) {
+              return;
+            }
+
             if (!isNumeric(_amountController.text)) {
               showSnackBar(context, "Veuillez d'abord saisir un montant valide",
                   duration: 5);

@@ -408,7 +408,7 @@ class _ConfirmationFormState extends State<ConfirmationForm>
       if (!st) {
         _handleErrorRequest(status);
       } else {
-        showFormValidationToast("Livraison reussie", Colors.green);
+        showFormValidationToast("Donation reussie", Colors.green);
         Navigator.of(context).pushReplacementNamed("/home");
       }
     }

@@ -78,6 +78,10 @@ class _OperatorFormState extends State<OperatorForm>
             size: 30,
           ),
           onPressed: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            if (!_formKey.currentState.validate()) {
+              return;
+            }
             if (_selectedOperator == null) {
               showSnackBar(context, "Veuillez d'abord choisir un operateur");
               return;
@@ -204,6 +208,17 @@ class _OperatorFormState extends State<OperatorForm>
   Widget _phoneInput() {
     return TextFormField(
       controller: _phoneController,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Champ obligatoire';
+        }
+
+        RegExp regex = new RegExp("[^0][0-9]{8,}");
+        if (!regex.hasMatch(value)) {
+          return "Le format n'est pas respecté. Minimum 9 chiffres";
+        }
+        return null;
+      },
       inputFormatters: [
         WhitelistingTextInputFormatter.digitsOnly,
       ],

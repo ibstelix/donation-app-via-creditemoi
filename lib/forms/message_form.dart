@@ -1,4 +1,6 @@
 import 'package:codedecoders/scope/main_model.dart';
+import 'package:codedecoders/strings/const.dart';
+import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/widgets/loading_spinner.dart';
 import 'package:flutter/material.dart';
 
@@ -47,7 +49,14 @@ class _MessageFormState extends State<MessageForm> {
                 color: Colors.blue,
                 size: 30,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+                if (!_formKey.currentState.validate()) {
+                  return;
+                }
+
+                _sendMessage();
+              },
             ),
           ],
         ),
@@ -75,17 +84,31 @@ class _MessageFormState extends State<MessageForm> {
             children: <Widget>[
               TextFormField(
                 controller: _messageController,
+                validator: (String value) {
+                  if (value.isEmpty) {
+                    return 'Champ obligatoire';
+                  }
+
+                  return null;
+                },
                 decoration: InputDecoration(
-                  hintText: "Saisir votre message",
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.white.withOpacity(0.4)),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.white.withOpacity(0.4)),
-                  ),
-                ),
+                    hintText: "Saisir votre message",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white.withOpacity(0.4)),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white.withOpacity(0.4)),
+                    ),
+                    errorBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white.withOpacity(0.4)),
+                    ),
+                    focusedErrorBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white.withOpacity(0.4)),
+                    )),
                 scrollPadding: EdgeInsets.all(20.0),
                 keyboardType: TextInputType.multiline,
                 maxLines: 10,
@@ -114,5 +137,45 @@ class _MessageFormState extends State<MessageForm> {
         ),
       ),
     );
+  }
+
+  void _sendMessage() async {
+    setState(() {
+      _loading = true;
+    });
+    var message = _messageController.text;
+    var checkOS =
+        Theme.of(context).platform == TargetPlatform.iOS ? 'iOS' : 'Android';
+    var anon_data = await widget.model.getDeviceUserID(checkOS);
+    print('anon_data $anon_data');
+//    var trans_id = anon_data['ext_transaction_ID'].substring(8);
+    var trans_id = new DateTime.now().millisecondsSinceEpoch;
+    var sendData = {
+      "description": message,
+      "transaction_id": trans_id.toString()
+    };
+    var url = '${baseurl}auth/claims';
+
+    var res = await widget.model.post_api(sendData, url, true);
+
+    setState(() {
+      _loading = false;
+    });
+    bool st = res['status'] ?? false;
+
+    if (!st) {
+      _handleErrorRequest(res);
+    } else {
+      showFormValidationToast("Message envoyé", Colors.green);
+    }
+  }
+
+  void _handleErrorRequest(Map status) {
+    print('error status is $status');
+    var msg = status.containsKey('msg')
+        ? (status['msg'] != null ? status['msg'] : 'Erreur Http Inattendue')
+        : "Une erreur inattendue s'est produit";
+    status['msg'] = msg;
+    showSnackBar(context, msg, status: false, duration: 8);
   }
 }
