@@ -10,6 +10,7 @@ import 'package:codedecoders/forms/confirmation_form.dart';
 import 'package:codedecoders/forms/country_selector.dart';
 import 'package:codedecoders/forms/operator_form.dart';
 import 'package:codedecoders/screens/help_page.dart';
+import 'package:codedecoders/screens/report_page.dart';
 import 'package:codedecoders/screens/transaction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -68,6 +69,9 @@ class MyApp extends StatelessWidget {
                 model: _model,
               ),
           '/message': (BuildContext context) => MessageForm(
+                model: _model,
+              ),
+          '/report': (BuildContext context) => ReportPage(
                 model: _model,
               ),
           '/help': (BuildContext context) => HelpPage(),

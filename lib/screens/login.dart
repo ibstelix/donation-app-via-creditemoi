@@ -115,41 +115,44 @@ class _LoginState extends State<Login> {
   }
 
   Widget _reportBtn() {
-    return Container(
-      width: 330,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            DEFAULT_COLOR1,
-            Color(0xff3cabff),
-            DEFAULT_COLOR1,
-            DEFAULT_COLOR1
-          ],
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, "/report"),
+      child: Container(
+        width: 330,
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              DEFAULT_COLOR1,
+              Color(0xff3cabff),
+              DEFAULT_COLOR1,
+              DEFAULT_COLOR1
+            ],
+          ),
         ),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              LineAwesomeIcons.pie_chart,
-              color: Colors.white,
-              size: 35,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              "Rapports",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "CentraleSansRegular",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                LineAwesomeIcons.pie_chart,
+                color: Colors.white,
+                size: 35,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                "Rapports",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "CentraleSansRegular",
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -157,9 +160,7 @@ class _LoginState extends State<Login> {
 
   Widget _paticipateBtn() {
     return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, "/home");
-      },
+      onTap: () => Navigator.pushNamed(context, "/home"),
       child: Container(
         width: 330,
         height: 60,
