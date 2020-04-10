@@ -6,6 +6,7 @@ import 'package:codedecoders/strings/const.dart';
 import 'package:codedecoders/utils/general.dart';
 import 'package:codedecoders/utils/style.dart';
 import 'package:codedecoders/widgets/loading_spinner.dart';
+import 'package:codedecoders/widgets/transaction_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -208,13 +209,7 @@ class _DashboardState extends State<Dashboard>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          Text(
-                            "TRANSACTIONS RECENTES",
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 17.0,
-                            ),
-                          ),
+                          _trans_titke(context),
                           Expanded(
                             child: ListView(
                               physics: BouncingScrollPhysics(),
@@ -263,6 +258,38 @@ class _DashboardState extends State<Dashboard>
           /* bottomNavigationBar: buildBottomNavigationBar(context),*/
         ),
       ),
+    );
+  }
+
+  Widget _trans_titke(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          "TRANSACTIONS RECENTES",
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontSize: 15.0,
+          ),
+        ),
+        IconButton(
+          onPressed: () async {
+            var dialog_result = await showDialog<dynamic>(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return TransactionFilter();
+              },
+            );
+
+            print('dialog result is $dialog_result');
+          },
+          icon: Icon(
+            Icons.filter_list,
+            color: Colors.grey,
+          ),
+        )
+      ],
     );
   }
 
